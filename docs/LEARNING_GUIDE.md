@@ -96,3 +96,10 @@ The app uses semantic routes, labels, `aria-label` for icon buttons, `role="dial
 8. **How does a protected route work?** It checks auth state and returns either an `Outlet` or a redirect.
 9. **Why must effects clean up?** To remove event listeners/timers/subscriptions and prevent updates after unmount.
 10. **Why does localStorage not replace a backend?** Users can alter it and it is browser-specific; secure sessions and permissions must be validated server-side.
+11. **thunk** vs **saga**?** Both handle async flows; thunks are simpler and more explicit, while sagas use generator functions for complex flows and side effects.
+12. **What is the difference between `useEffect` and `useLayoutEffect`?** `useEffect` runs after paint, while `useLayoutEffect` runs synchronously before paint, blocking visual updates.
+13. **What is the difference between `useMemo` and `useCallback`?** `useMemo` memoizes a value, while `useCallback` memoizes a function reference.
+14. **What is the difference between `useReducer` and `useState`?** `useState` is for simple state management, while `useReducer` is better for complex state transitions and logic.
+15. **What is the difference between controlled and uncontrolled components?** Controlled components have their state managed by React, while uncontrolled components manage their own state internally.
+16. **What is the difference between Redux and Context API?** Redux is a state management library that provides a centralized store, while Context API is a built-in React feature for passing data through the component tree without prop drilling.
+17. **Functional component vs class component?** Functional components are simpler and use hooks for state and lifecycle methods, while class components have more boilerplate and use `this` for state and lifecycle methods.
