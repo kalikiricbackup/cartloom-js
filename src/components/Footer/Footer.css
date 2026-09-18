@@ -1,0 +1,24 @@
+.footer {
+  width: 100%;
+  background-color: #111827;
+  color: #ffffff;
+}
+
+.footer__container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  text-align: center;
+}
+
+.footer__container p {
+  margin: 0;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .footer__container {
+    padding: 16px;
+  }
+}
