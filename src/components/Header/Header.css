@@ -1,62 +1,105 @@
 .header {
-  width: 100%;
-  background-color: #ffffff;
-  border-bottom: 1px solid #e5e7eb;
+  min-height: 66px;
+  background: #173268;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(23, 50, 104, 0.18);
 }
 
 .header__container {
-  width: 100%;
-  max-width: 1200px;
+  width: min(1180px, calc(100% - 32px));
+  min-height: 66px;
   margin: 0 auto;
-  padding: 16px 24px;
 
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 28px;
 }
 
 .header__logo {
-  font-size: 24px;
-  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  color: #ffffff;
+  font-size: 1.25rem;
+  font-weight: 800;
+}
+
+.header__logo-icon {
+  color: #ffd900;
+  font-size: 1.4rem;
+  line-height: 1;
 }
 
 .header__navigation {
   display: flex;
   align-items: center;
-  gap: 24px;
-}
-
-.header__navigation a {
-  color: #111827;
-  text-decoration: none;
-}
-
-.header__navigation a:hover {
-  text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-  .header__container {
-    padding: 16px;
-  }
-  .header__navigation {
-    gap: 12px;
-  }
-  .header__navigation a {
-    font-size: 14px;
-  }
+  gap: 22px;
 }
 
 .header__link {
-  color: #111827;
+  color: #ffffff;
   text-decoration: none;
+  font-weight: 600;
+  opacity: 0.95;
 }
 
 .header__link:hover {
-  text-decoration: underline;
+  opacity: 1;
 }
 
 .header__link--active {
+  font-weight: 800;
+}
+
+.header__actions {
+  margin-left: auto;
+
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.header__theme-button {
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  padding: 6px;
+  font-size: 1.1rem;
+  cursor: pointer;
+}
+
+.header__login-button {
+  padding: 9px 17px;
+  border-radius: 8px;
+
+  background: #3779ee;
+  color: #ffffff;
+
   font-weight: 700;
-  text-decoration: underline;
+  text-decoration: none;
+}
+
+.header__login-button:hover {
+  background: #286be0;
+}
+
+@media (max-width: 850px) {
+  .header__container {
+    gap: 16px;
+  }
+
+  .header__navigation {
+    gap: 12px;
+  }
+
+  .header__link {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 650px) {
+  .header__navigation {
+    display: none;
+  }
 }

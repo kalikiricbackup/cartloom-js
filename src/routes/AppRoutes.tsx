@@ -10,7 +10,7 @@ function AppRoutes() {
       <Routes>
         <Route element={<AppLayoutRoute />}>
           <Route path="/" element={<Home />} />
-          <Route path="/products" element={<Products />} />
+          <Route path="/products/:category?" element={<Products />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
