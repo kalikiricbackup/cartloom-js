@@ -1,0 +1,77 @@
+.product-filters h2 {
+  margin: 0 0 20px;
+  color: #173268;
+  font-size: 1.1rem;
+}
+
+.filter-section {
+  padding: 16px 0;
+  border-top: 1px solid #e5ebf4;
+}
+
+.filter-section:first-of-type {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.filter-section h3 {
+  margin: 0 0 10px;
+  color: #173268;
+  font-size: 0.9rem;
+}
+
+.filter-section select {
+  width: 100%;
+  height: 36px;
+  padding: 0 8px;
+  border: 1px solid #d5dfed;
+  border-radius: 6px;
+  color: #173268;
+  background: #ffffff;
+}
+
+.filter-checkbox,
+.filter-rating {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 9px;
+  color: #506887;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.filter-checkbox input,
+.filter-rating input {
+  margin: 0;
+}
+
+.filter-rating span {
+  color: #f2a900;
+  letter-spacing: 1px;
+}
+
+.filter-rating small {
+  color: #7085a8;
+}
+
+.price-values {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: #506887;
+  font-size: 0.75rem;
+}
+
+.filter-section input[type="range"] {
+  width: 100%;
+}
+
+.clear-rating {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #3779ee;
+  font-size: 0.78rem;
+  cursor: pointer;
+}

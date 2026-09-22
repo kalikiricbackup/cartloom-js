@@ -5,17 +5,13 @@ function Header() {
   return (
     <header className="header">
       <div className="header__container">
-        <div className="header__logo">CartLoom</div>
+        <NavLink to="/" className="header__logo">
+          <span className="header__logo-icon">□</span>
+
+          <span>CartLoom</span>
+        </NavLink>
 
         <nav className="header__navigation">
-          <NavLink
-            to="/"
-            className={({ isActive }) =>
-              isActive ? "header__link header__link--active" : "header__link"
-            }
-          >
-            Home
-          </NavLink>
           <NavLink
             to="/products"
             className={({ isActive }) =>
@@ -24,8 +20,48 @@ function Header() {
           >
             Products
           </NavLink>
-          <a href="/">Contact</a>
+
+          <NavLink
+            to="/wishlist"
+            className={({ isActive }) =>
+              isActive ? "header__link header__link--active" : "header__link"
+            }
+          >
+            Wishlist
+          </NavLink>
+
+          <NavLink
+            to="/cart"
+            className={({ isActive }) =>
+              isActive ? "header__link header__link--active" : "header__link"
+            }
+          >
+            Cart (0)
+          </NavLink>
+
+          <NavLink
+            to="/help"
+            className={({ isActive }) =>
+              isActive ? "header__link header__link--active" : "header__link"
+            }
+          >
+            Help
+          </NavLink>
         </nav>
+
+        <div className="header__actions">
+          <button
+            type="button"
+            className="header__theme-button"
+            aria-label="Toggle theme"
+          >
+            ◐
+          </button>
+
+          <NavLink to="/login" className="header__login-button">
+            Login / Signup
+          </NavLink>
+        </div>
       </div>
     </header>
   );
