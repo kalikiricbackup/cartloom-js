@@ -88,6 +88,9 @@
   font-size: 1rem;
   cursor: pointer;
 }
+.view-all-button:hover {
+  text-decoration: underline;
+}
 
 .home-product-card {
   overflow: hidden;

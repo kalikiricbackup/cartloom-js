@@ -68,8 +68,6 @@ function ProductsPresenter({
             <span>Home</span>
             <span>›</span>
             <span>{category}</span>
-            {/* <span>›</span>
-            <span>{selectedCategory}</span> */}
           </div>
           {/* Category header */}
           <div className="products-header">

@@ -1,0 +1,134 @@
+.product-details {
+  color: #173268;
+}
+
+.product-details__breadcrumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-bottom: 18px;
+  color: #7085a8;
+  font-size: 0.78rem;
+}
+
+.product-details__breadcrumb span:last-child {
+  color: #173268;
+  font-weight: 600;
+}
+
+.product-details__main {
+  display: grid;
+  grid-template-columns:
+    minmax(400px, 0.95fr)
+    minmax(420px, 1.05fr);
+
+  gap: 40px;
+  padding: 22px;
+  border: 1px solid #dce5f3;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.product-details__left {
+  min-width: 0;
+}
+
+.product-details__right {
+  min-width: 0;
+}
+
+.product-details__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  margin-top: 16px;
+}
+
+.product-details__actions button {
+  padding: 7px 10px;
+  border: 0;
+  background: transparent;
+  color: #173268;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.product-details__actions button:hover {
+  color: #0877f9;
+}
+
+.product-details__actions .wishlist-active {
+  color: #ef3c61;
+  font-weight: 700;
+}
+
+.product-details__purchase {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.product-details__purchase button {
+  min-height: 46px;
+  border-radius: 7px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.product-details__cart-button {
+  border: 1px solid #0877f9;
+  background: #ffffff;
+  color: #0877f9;
+}
+
+.product-details__buy-button {
+  border: 1px solid #0877f9;
+  background: #0877f9;
+  color: #ffffff;
+}
+
+.product-details__purchase button:disabled {
+  border-color: #cbd4df;
+  background: #e9edf2;
+  color: #8793a3;
+  cursor: not-allowed;
+}
+
+.product-details-not-found {
+  width: min(1180px, calc(100% - 32px));
+  margin: 80px auto;
+  text-align: center;
+}
+
+@media (max-width: 950px) {
+  .product-details__main {
+    grid-template-columns: 1fr;
+    gap: 25px;
+  }
+}
+
+@media (max-width: 600px) {
+  .product-details__main {
+    padding: 12px;
+  }
+
+  .product-gallery {
+    min-height: 320px;
+  }
+
+  .product-gallery__main {
+    min-height: 300px;
+  }
+
+  .product-gallery__main img {
+    height: 300px;
+  }
+
+  .product-details__purchase {
+    grid-template-columns: 1fr;
+  }
+}
