@@ -63,7 +63,9 @@ function ProductsContainer() {
     }
     // Price
     result = result.filter(
-      (product) => product.price >= minPrice && product.price <= maxPrice,
+      (product) =>
+        product.variants[0]?.price >= minPrice &&
+        product.variants[0]?.price <= maxPrice,
     );
     console.log("selected Rating is ", selectedRating, result);
 
@@ -75,10 +77,10 @@ function ProductsContainer() {
 
     // Sorting
     if (sortBy === "price-low") {
-      result.sort((a, b) => a.price - b.price);
+      result.sort((a, b) => a.variants[0]?.price - b.variants[0]?.price);
     }
     if (sortBy === "price-high") {
-      result.sort((a, b) => b.price - a.price);
+      result.sort((a, b) => b.variants[0]?.price - a.variants[0]?.price);
     }
 
     if (sortBy === "rating") {

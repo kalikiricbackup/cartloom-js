@@ -1,0 +1,27 @@
+.product-offers {
+  padding: 16px 0;
+  border-bottom: 1px solid #e1e8f2;
+}
+
+.product-offers h2 {
+  margin: 0 0 10px;
+  color: #173268;
+  font-size: 0.95rem;
+}
+
+.product-offers__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 7px;
+}
+
+.product-offers__item span {
+  color: #3779ee;
+}
+
+.product-offers__item p {
+  margin: 0;
+  color: #506887;
+  font-size: 0.8rem;
+}

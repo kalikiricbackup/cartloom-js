@@ -3,7 +3,7 @@
   border-radius: 6px;
   padding: 12px 24px;
 
-  background-color: #2563eb;
+  background-color: var(--color-primary);
   color: #ffffff;
 
   font-size: 16px;

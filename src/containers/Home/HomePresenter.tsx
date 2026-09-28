@@ -27,13 +27,7 @@ function HomePresenter({ userName, categories, products }: HomePresenterProps) {
           <p className="home-hero__description">
             Discover deals in mobiles, fashion, home, and electronics.
           </p>
-          <Button
-            onClick={() => {
-              console.log("Shop Now clicked");
-            }}
-          >
-            Shop Now
-          </Button>
+          <Button onClick={() => navigate("/products")}>Shop Now</Button>
         </div>
         <div className="home-hero__image">🎧</div>
       </section>
@@ -60,7 +54,11 @@ function HomePresenter({ userName, categories, products }: HomePresenterProps) {
       <section className="home-section">
         <div className="page-heading">
           <h2>Trending Deals</h2>
-          <button type="button" className="view-all-button">
+          <button
+            type="button"
+            className="view-all-button"
+            onClick={() => navigate("/products")}
+          >
             View all
           </button>
         </div>
@@ -75,7 +73,9 @@ function HomePresenter({ userName, categories, products }: HomePresenterProps) {
                 >
                   ♡
                 </button>
-                <span className="product-image">{product.image}</span>
+                <span className="product-image">
+                  {product.variants[0]?.images[0] ?? ""}
+                </span>
               </div>
               <div className="home-product-card__content">
                 {product.badge && (
@@ -87,8 +87,13 @@ function HomePresenter({ userName, categories, products }: HomePresenterProps) {
                   <span> ({product.reviews} left)</span>
                 </p>
                 <div className="product-price">
-                  <strong>₹{product.price.toLocaleString("en-IN")}</strong>
-                  <del>₹{product.originalPrice.toLocaleString("en-IN")}</del>
+                  <strong>
+                    ₹{product.variants[0]?.price.toLocaleString("en-IN")}
+                  </strong>
+                  <del>
+                    ₹
+                    {product.variants[0]?.originalPrice.toLocaleString("en-IN")}
+                  </del>
                 </div>
                 <Button
                   onClick={() => {
