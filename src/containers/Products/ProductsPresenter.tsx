@@ -9,6 +9,8 @@ interface ProductsPresenterProps {
   category: string | undefined;
   products: Product[];
   totalProducts: number;
+  isLoading: boolean;
+  error: string;
   productCategories: string[];
   productBrands: string[];
   selectedCategory: string;
@@ -28,6 +30,8 @@ function ProductsPresenter({
   category,
   products,
   totalProducts,
+  isLoading,
+  error,
   productCategories,
   productBrands,
   selectedCategory,
@@ -91,7 +95,15 @@ function ProductsPresenter({
             </div>
           </div>
           {/* Products */}
-          {products.length > 0 ? (
+          {isLoading ? (
+            <p className="products-status" role="status">
+              Loading products…
+            </p>
+          ) : error ? (
+            <p className="products-status products-status--error" role="alert">
+              {error}
+            </p>
+          ) : products.length > 0 ? (
             <ProductGrid products={products} />
           ) : (
             <h4 className="products-empty-state">

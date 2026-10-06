@@ -12,6 +12,8 @@ export interface ProductOption {
 
 export interface ProductVariant {
   id: string;
+  productId?: number;
+  slug?: string;
   options: ProductOption[];
 
   price: number;
@@ -32,7 +34,7 @@ export interface Product {
   // originalPrice: number;
   rating: number;
   reviews: number;
-  badge?: string;
+  badge?: string | null;
   offers: string[];
   variants: ProductVariant[];
 }

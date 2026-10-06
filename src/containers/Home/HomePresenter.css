@@ -175,6 +175,12 @@
   width: 100%;
 }
 
+.products-empty-state {
+  margin: 80px 0;
+  color: #506887;
+  text-align: center;
+}
+
 @media (max-width: 850px) {
   .category-grid {
     grid-template-columns: repeat(2, 1fr);
