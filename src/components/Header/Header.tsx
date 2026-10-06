@@ -62,9 +62,21 @@ function Header() {
             ◐
           </button>
 
-          <NavLink to="/login" className="header__login-button">
-            Login / Signup
-          </NavLink>
+          {isAuthenticated ? (
+            // <NavLink to="/profile" className="header__profile-button">
+            //   Logout
+            // </NavLink>
+            <button type="button" className="header__login-button" onClick={() => {
+              localStorage.removeItem("accessToken");
+              window.location.href = "/";
+            }}>
+              Logout
+            </button> 
+          ) : (
+            <NavLink to="/login" className="header__login-button">
+              Login / Signup
+            </NavLink>
+          )}
         </div>
       </div>
     </header>
