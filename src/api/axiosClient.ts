@@ -3,6 +3,7 @@ import axios, {
   AxiosResponse,
   InternalAxiosRequestConfig,
 } from "axios";
+import { startLoading, stopLoading } from "../services/loadingService";
 
 interface ErrorResponse {
   message?: string;
@@ -12,11 +13,13 @@ interface ErrorResponse {
 
 export interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   skipAuth?: boolean;
+  skipLoading?: boolean;
+  _loadingTracked?: boolean;
   _retry?: boolean;
 }
 
 const apiClient = axios.create({
-  baseURL: process.env.REACT_APP_API_BASE_URL,
+  baseURL: "https://shopkart-api-7yeu.onrender.com/",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
@@ -64,6 +67,11 @@ apiClient.interceptors.request.use(
 
     logApiRequest(config.method ?? "GET", config.url ?? "", config.data);
 
+    if (!customConfig.skipLoading) {
+      customConfig._loadingTracked = true;
+      startLoading();
+    }
+
     return config;
   },
   (error: AxiosError) => {
@@ -78,10 +86,13 @@ apiClient.interceptors.response.use(
   (response: AxiosResponse) => {
     logApiResponse(response.config.url ?? "", response.status, response.data);
 
+    finishLoading(response.config as CustomAxiosRequestConfig);
+
     return response;
   },
   async (error: AxiosError<ErrorResponse>) => {
     logApiError(error.config?.url ?? "", error);
+    finishLoading(error.config as CustomAxiosRequestConfig | undefined);
 
     if (error.response?.status === 401) {
       console.warn("[AUTH] Unauthorized request");
@@ -92,5 +103,12 @@ apiClient.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+function finishLoading(config?: CustomAxiosRequestConfig) {
+  if (config?._loadingTracked) {
+    config._loadingTracked = false;
+    stopLoading();
+  }
+}
 
 export default apiClient;

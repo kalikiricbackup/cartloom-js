@@ -3,14 +3,14 @@ import PageContainer from "../../components/PageContainer/PageContainer";
 import { Category, Product } from "../../types";
 import { useNavigate } from "react-router-dom";
 import "./HomePresenter.css";
+import ProductGrid from "../../components/ProductGrid/ProductGrid";
 
 interface HomePresenterProps {
-  userName: string;
   products: Product[];
   categories: Category[];
 }
 
-function HomePresenter({ userName, categories, products }: HomePresenterProps) {
+function HomePresenter({ categories, products }: HomePresenterProps) {
   const navigate = useNavigate();
 
   return (
@@ -62,50 +62,13 @@ function HomePresenter({ userName, categories, products }: HomePresenterProps) {
             View all
           </button>
         </div>
-        <div className="product-grid">
-          {products.map((product) => (
-            <article key={product.id} className="home-product-card">
-              <div className="home-product-card__image">
-                <button
-                  type="button"
-                  className="wishlist-button"
-                  aria-label={`Add ${product.name} to wishlist`}
-                >
-                  ♡
-                </button>
-                <span className="product-image">
-                  {product.variants[0]?.images[0] ?? ""}
-                </span>
-              </div>
-              <div className="home-product-card__content">
-                {product.badge && (
-                  <p className="product-badge">{product.badge}</p>
-                )}
-                <h3>{product.name}</h3>
-                <p className="product-rating">
-                  ★ {product.rating}
-                  <span> ({product.reviews} left)</span>
-                </p>
-                <div className="product-price">
-                  <strong>
-                    ₹{product.variants[0]?.price.toLocaleString("en-IN")}
-                  </strong>
-                  <del>
-                    ₹
-                    {product.variants[0]?.originalPrice.toLocaleString("en-IN")}
-                  </del>
-                </div>
-                <Button
-                  onClick={() => {
-                    console.log(`Add ${product.name} to cart`);
-                  }}
-                >
-                  Add to Cart
-                </Button>
-              </div>
-            </article>
-          ))}
-        </div>
+        {products.length > 0 ? (
+          <ProductGrid products={products} columns={4} />
+        ) : (
+          <h4 className="products-empty-state">
+            No item(s) found based on your filter.
+          </h4>
+        )}
       </section>
     </PageContainer>
   );

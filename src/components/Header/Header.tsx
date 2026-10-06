@@ -2,6 +2,8 @@ import { NavLink } from "react-router-dom";
 import "./Header.css";
 
 function Header() {
+  const isAuthenticated = Boolean(localStorage.getItem("accessToken"));
+
   return (
     <header className="header">
       <div className="header__container">
@@ -21,14 +23,16 @@ function Header() {
             Products
           </NavLink>
 
-          <NavLink
-            to="/wishlist"
-            className={({ isActive }) =>
-              isActive ? "header__link header__link--active" : "header__link"
-            }
-          >
-            Wishlist
-          </NavLink>
+          {isAuthenticated && (
+            <NavLink
+              to="/wishlist"
+              className={({ isActive }) =>
+                isActive ? "header__link header__link--active" : "header__link"
+              }
+            >
+              Wishlist
+            </NavLink>
+          )}
 
           <NavLink
             to="/cart"

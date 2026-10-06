@@ -28,6 +28,16 @@
   text-align: center;
 }
 
+.products-status {
+  margin: 80px 0;
+  color: #506887;
+  text-align: center;
+}
+
+.products-status--error {
+  color: #b42318;
+}
+
 .products-breadcrumb {
   display: flex;
   align-items: center;

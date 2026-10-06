@@ -1,12 +1,15 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { isAxiosError } from "axios";
 import { useParams } from "react-router-dom";
 import ProductsPresenter from "./ProductsPresenter";
 import { Product } from "../../types";
-import { trendingProducts } from "../../services/mockApi";
+import { getProducts } from "../../services/productService";
 
 function ProductsContainer() {
   const { category } = useParams<{ category?: string }>();
-  const [products] = useState<Product[]>(trendingProducts);
+  const [products, setProducts] = useState<Product[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
   const routeCategory = category ?? "All";
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
@@ -16,6 +19,44 @@ function ProductsContainer() {
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
 
   const [sortBy, setSortBy] = useState("popularity");
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadProducts() {
+      setIsLoading(true);
+      setError("");
+
+      try {
+        const response = await getProducts(controller.signal);
+        setProducts(response.products);
+      } catch (requestError: unknown) {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        const apiMessage = isAxiosError<{ detail?: string; message?: string }>(
+          requestError,
+        )
+          ? (requestError.response?.data?.detail ??
+            requestError.response?.data?.message)
+          : undefined;
+        setError(
+          typeof apiMessage === "string"
+            ? apiMessage
+            : "Unable to load products. Please try again later.",
+        );
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
+    }
+
+    void loadProducts();
+
+    return () => controller.abort();
+  }, []);
 
   const categoryProducts = useMemo(
     () =>
@@ -67,14 +108,10 @@ function ProductsContainer() {
         product.variants[0]?.price >= minPrice &&
         product.variants[0]?.price <= maxPrice,
     );
-    console.log("selected Rating is ", selectedRating, result);
-
     // Rating
     if (selectedRating !== null) {
       result = result.filter((product) => product.rating >= selectedRating);
     }
-    console.log("final list--", result);
-
     // Sorting
     if (sortBy === "price-low") {
       result.sort((a, b) => a.variants[0]?.price - b.variants[0]?.price);
@@ -106,6 +143,8 @@ function ProductsContainer() {
       category={category}
       products={filteredProducts}
       totalProducts={filteredProducts.length}
+      isLoading={isLoading}
+      error={error}
       productCategories={productCategories}
       productBrands={productBrands}
       selectedCategory={selectedCategory}
