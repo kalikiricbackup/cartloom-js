@@ -4,6 +4,21 @@ export interface Category {
   icon: string;
 }
 
+export interface HomeCategory {
+  id: string;
+  name: string;
+  slug: string;
+  icon: string;
+  description: string;
+  productCount: number;
+}
+ 
+export interface HomePageData {
+  topCategories: HomeCategory[];
+  bestDeals: Product[];
+  products?: Product[];
+}
+
 export interface ProductOption {
   type: string;
   label: string;

@@ -8,4 +8,6 @@ export const API_ENDPOINTS = {
     LIST: "/products",
     BY_ID: (id: number) => `/products/${id}`,
   },
+
+  HOME: "/home",
 };

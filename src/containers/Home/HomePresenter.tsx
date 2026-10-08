@@ -1,17 +1,27 @@
 import Button from "../../components/Button/Button";
 import PageContainer from "../../components/PageContainer/PageContainer";
-import { Category, Product } from "../../types";
+import { HomeCategory, Product } from "../../types";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./HomePresenter.css";
 import ProductGrid from "../../components/ProductGrid/ProductGrid";
 
 interface HomePresenterProps {
-  products: Product[];
-  categories: Category[];
+  bestDeals: Product[];
+  categories: HomeCategory[];
+  isLoading: boolean;
+  error: string;
 }
 
-function HomePresenter({ categories, products }: HomePresenterProps) {
+function HomePresenter({
+  categories,
+  bestDeals,
+  isLoading,
+  error,
+}: HomePresenterProps) {
   const navigate = useNavigate();
+  const [showAllDeals, setShowAllDeals] = useState(false);
+  const visibleProducts = showAllDeals ? bestDeals : bestDeals.slice(0, 4);
 
   return (
     <PageContainer>
@@ -44,7 +54,7 @@ function HomePresenter({ categories, products }: HomePresenterProps) {
               type="button"
               onClick={() => navigate(`/products/${category.name}`)}
             >
-              <span>{category.icon}</span>
+              <img src={category.icon} alt="" />
               <strong>{category.name}</strong>
             </button>
           ))}
@@ -53,17 +63,26 @@ function HomePresenter({ categories, products }: HomePresenterProps) {
       {/* Trending Deals */}
       <section className="home-section">
         <div className="page-heading">
-          <h2>Trending Deals</h2>
-          <button
-            type="button"
-            className="view-all-button"
-            onClick={() => navigate("/products")}
-          >
-            View all
-          </button>
+          <h2>Best Deals</h2>
+          {!isLoading && bestDeals.length > 4 && (
+            <button
+              type="button"
+              className="view-all-button"
+              aria-expanded={showAllDeals}
+              onClick={() => setShowAllDeals((current) => !current)}
+            >
+              {showAllDeals ? "View less" : "View all"}
+            </button>
+          )}
         </div>
-        {products.length > 0 ? (
-          <ProductGrid products={products} columns={4} />
+        {isLoading ? (
+          <p role="status">Loading deals...</p>
+        ) : error ? (
+          <p className="products-empty-state" role="alert">
+            {error}
+          </p>
+        ) : visibleProducts.length > 0 ? (
+          <ProductGrid products={visibleProducts} columns={4} />
         ) : (
           <h4 className="products-empty-state">
             No item(s) found based on your filter.
