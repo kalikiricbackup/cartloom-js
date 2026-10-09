@@ -34,15 +34,10 @@ function ProductDetailsPresenter({
   onAddToCart,
   onBuyNow,
 }: ProductDetailsPresenterProps) {
-  if (!selectedVariant) {
-    return (
-      <PageContainer>
-        <p className="error-text">
-          This product configuration is currently unavailable.
-        </p>
-      </PageContainer>
-    );
-  }
+  const displayVariant =
+    selectedVariant ??
+    product.variants.find((variant) => variant.stock > 0) ??
+    product.variants[0];
 
   return (
     <PageContainer>
@@ -62,54 +57,68 @@ function ProductDetailsPresenter({
         <div className="product-details__main">
           {/* LEFT */}
           <section className="product-details__left">
-            <ProductGallery
-              images={selectedVariant.images}
-              selectedImageIndex={selectedImageIndex}
-              onImageChange={onImageChange}
-            />
+            {displayVariant && (
+              <>
+                <ProductGallery
+                  images={displayVariant.images}
+                  selectedImageIndex={selectedImageIndex}
+                  onImageChange={onImageChange}
+                />
 
-            <div className="product-details__actions">
-              <button type="button" onClick={onShare}>
-                ↗ Share
-              </button>
-              <button
-                type="button"
-                className={isWishlisted ? "wishlist-active" : ""}
-                onClick={onWishlistChange}
-              >
-                {isWishlisted ? "♥" : "♡"} Add to Wishlist
-              </button>
-            </div>
+                <div className="product-details__actions">
+                  <button type="button" onClick={onShare}>
+                    ↗ Share
+                  </button>
+                  <button
+                    type="button"
+                    className={isWishlisted ? "wishlist-active" : ""}
+                    onClick={onWishlistChange}
+                  >
+                    {isWishlisted ? "♥" : "♡"} Add to Wishlist
+                  </button>
+                </div>
+              </>
+            )}
           </section>
 
           {/* RIGHT */}
           <section className="product-details__right">
-            <ProductInformation product={product} variant={selectedVariant} />
-            <ProductOffers offers={product.offers} />
             <ProductVariants
               product={product}
               selectedOptions={selectedOptions}
               onOptionChange={onOptionChange}
             />
 
-            <div className="product-details__purchase">
-              <button
-                type="button"
-                className="product-details__cart-button"
-                onClick={onAddToCart}
-                disabled={selectedVariant.stock === 0}
-              >
-                {selectedVariant.stock === 0 ? "Out of Stock" : "Add to Cart"}
-              </button>
-              <button
-                type="button"
-                className="product-details__buy-button"
-                onClick={onBuyNow}
-                disabled={selectedVariant.stock === 0}
-              >
-                Buy Now
-              </button>
-            </div>
+            {displayVariant && (
+              <>
+                <ProductInformation
+                  product={product}
+                  variant={displayVariant}
+                />
+                <ProductOffers offers={product.offers} />
+
+                <div className="product-details__purchase">
+                  <button
+                    type="button"
+                    className="product-details__cart-button"
+                    onClick={onAddToCart}
+                    disabled={!selectedVariant || selectedVariant.stock === 0}
+                  >
+                    {selectedVariant?.stock === 0
+                      ? "Out of Stock"
+                      : "Add to Cart"}
+                  </button>
+                  <button
+                    type="button"
+                    className="product-details__buy-button"
+                    onClick={onBuyNow}
+                    disabled={!selectedVariant || selectedVariant.stock === 0}
+                  >
+                    Buy Now
+                  </button>
+                </div>
+              </>
+            )}
           </section>
         </div>
       </div>

@@ -2,10 +2,13 @@ import { isAxiosError } from "axios";
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { register } from "../../services/authService";
+import { signedIn } from "../../store/slices/authSlice";
+import { useAppDispatch } from "../../store/store";
 import RegisterPresenter from "./RegisterPresenter";
 
 function RegisterContainer() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [message, setMessage] = useState("");
   const [canSubmit, setCanSubmit] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,10 +53,12 @@ function RegisterContainer() {
 
       localStorage.setItem("accessToken", response.access_token);
       localStorage.setItem("refreshToken", response.refresh_token);
+      dispatch(signedIn());
       navigate("/");
     } catch (error: unknown) {
       if (isAxiosError<{ detail?: string; message?: string }>(error)) {
-        const apiMessage = error.response?.data?.detail ?? error.response?.data?.message;
+        const apiMessage =
+          error.response?.data?.detail ?? error.response?.data?.message;
         setMessage(
           typeof apiMessage === "string"
             ? apiMessage

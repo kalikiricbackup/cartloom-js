@@ -2,10 +2,13 @@ import { isAxiosError } from "axios";
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../services/authService";
+import { signedIn } from "../../store/slices/authSlice";
+import { useAppDispatch } from "../../store/store";
 import LoginPresenter from "./LoginPresenter";
 
 function LoginContainer() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [activeTab, setActiveTab] = useState<"mobile" | "email">("mobile");
   const [showOtp, setShowOtp] = useState(false);
   const [phone, setPhone] = useState("");
@@ -54,6 +57,7 @@ function LoginContainer() {
 
       localStorage.setItem("accessToken", response.access_token);
       localStorage.setItem("refreshToken", response.refresh_token);
+      dispatch(signedIn());
       navigate("/");
     } catch (error: unknown) {
       if (isAxiosError<{ detail?: string; message?: string }>(error)) {

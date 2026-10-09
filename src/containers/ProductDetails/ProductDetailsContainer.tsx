@@ -1,36 +1,72 @@
-import { useMemo, useState } from "react";
+import { isAxiosError } from "axios";
+import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 
+import PageContainer from "../../components/PageContainer/PageContainer";
+import { getProductById } from "../../services/productService";
+import { Product } from "../../types";
 import ProductDetailsPresenter from "./ProductDetailsPresenter";
-import { trendingProducts } from "../../services/mockApi";
 
 function ProductDetailsContainer() {
   const { id } = useParams<{ id: string }>();
-
-  const product = trendingProducts.find((item) => item.id === Number(id));
-  console.log("id and product", id, product);
-
+  const productId = Number(id);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState("");
   const [selectedOptions, setSelectedOptions] = useState<
     Record<string, string>
-  >(() => {
-    if (!product?.variants.length) {
-      return {};
+  >({});
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [isWishlisted, setIsWishlisted] = useState(false);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function loadProduct() {
+      setProduct(null);
+      setSelectedOptions({});
+      setSelectedImageIndex(0);
+      setError("");
+
+      if (!id || !Number.isInteger(productId)) {
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const response = await getProductById(productId, controller.signal);
+        setProduct(response);
+      } catch (requestError: unknown) {
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        const apiMessage = isAxiosError<{
+          detail?: string;
+          message?: string;
+        }>(requestError)
+          ? (requestError.response?.data?.detail ??
+            requestError.response?.data?.message)
+          : undefined;
+
+        setError(
+          typeof apiMessage === "string"
+            ? apiMessage
+            : "Unable to load this product. Please try again later.",
+        );
+      } finally {
+        if (!controller.signal.aborted) {
+          setIsLoading(false);
+        }
+      }
     }
 
-    const firstVariant = product.variants[0];
+    void loadProduct();
 
-    return firstVariant.options.reduce(
-      (result, option) => ({
-        ...result,
-        [option.type]: option.value,
-      }),
-      {} as Record<string, string>,
-    );
-  });
-
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-
-  const [isWishlisted, setIsWishlisted] = useState(false);
+    return () => controller.abort();
+  }, [id, productId]);
 
   const selectedVariant = useMemo(() => {
     if (!product) {
@@ -44,20 +80,49 @@ function ProductDetailsContainer() {
     );
   }, [product, selectedOptions]);
 
+  if (isLoading) {
+    return (
+      <PageContainer>
+        <p role="status">Loading product...</p>
+      </PageContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <PageContainer>
+        <div className="product-details-not-found" role="alert">
+          <h1>Unable to Load Product</h1>
+          <p>{error}</p>
+        </div>
+      </PageContainer>
+    );
+  }
+
   if (!product) {
     return (
-      <div className="product-details-not-found">
-        <h1>Product Not Found</h1>
-        <p>The product you are looking for does not exist.</p>
-      </div>
+      <PageContainer>
+        <div className="product-details-not-found">
+          <h1>Product Not Found</h1>
+          <p>The product you are looking for does not exist.</p>
+        </div>
+      </PageContainer>
     );
   }
 
   const handleOptionChange = (type: string, value: string) => {
-    setSelectedOptions((current) => ({
-      ...current,
-      [type]: value,
-    }));
+    setSelectedOptions((current) => {
+      if (current[type] === value) {
+        const nextOptions = { ...current };
+        delete nextOptions[type];
+        return nextOptions;
+      }
+
+      return {
+        ...current,
+        [type]: value,
+      };
+    });
 
     setSelectedImageIndex(0);
   };

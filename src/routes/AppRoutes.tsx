@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Home from "../pages/Home/Home";
 import NotFound from "../pages/NotFound/NotFound";
 import Products from "../pages/Products/Products";
@@ -7,6 +7,7 @@ import AppLayoutRoute from "./AppLayoutRoute";
 import ProductDetails from "../pages/ProductDetails/ProductDetails";
 import Register from "../pages/Register/Register";
 import Login from "../pages/Login/Login";
+import ProtectedRoute from "./ProtectedRoute";
 
 function AppRoutes() {
   return (
@@ -16,16 +17,9 @@ function AppRoutes() {
           <Route path="/" element={<Home />} />
           <Route path="/products/:category?" element={<Products />} />
           <Route path="/productdetails/:id" element={<ProductDetails />} />
-          <Route
-            path="/wishlist"
-            element={
-              localStorage.getItem("accessToken") ? (
-                <Wishlist />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            }
-          />
+          <Route element={<ProtectedRoute />}>
+            <Route path="/wishlist" element={<Wishlist />} />
+          </Route>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="*" element={<NotFound />} />

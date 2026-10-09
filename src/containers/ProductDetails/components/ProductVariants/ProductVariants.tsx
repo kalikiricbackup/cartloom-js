@@ -43,20 +43,34 @@ function ProductVariants({
         return (
           <section key={type} className="product-variants__group">
             <h3>
-              {label}: <span>{selectedOptions[type]}</span>
+              {label}: <span>{selectedOptions[type] ?? "Select an option"}</span>
             </h3>
 
             <div className="product-variants__options">
               {options.map((value) => {
                 const isSelected = selectedOptions[type] === value;
 
-                const matchingVariant = product.variants.find((variant) =>
-                  variant.options.some(
-                    (option) => option.type === type && option.value === value,
-                  ),
+                const matchingVariants = product.variants.filter(
+                  (variant) =>
+                    variant.options.some(
+                      (option) =>
+                        option.type === type && option.value === value,
+                    ) &&
+                    Object.entries(selectedOptions).every(
+                      ([selectedType, selectedValue]) =>
+                        selectedType === type ||
+                        variant.options.some(
+                          (option) =>
+                            option.type === selectedType &&
+                            option.value === selectedValue,
+                        ),
+                    ),
                 );
 
-                const isOutOfStock = matchingVariant?.stock === 0;
+                const isUnavailable = matchingVariants.length === 0;
+                const isOutOfStock =
+                  !isUnavailable &&
+                  matchingVariants.every((variant) => variant.stock === 0);
 
                 return (
                   <button
@@ -67,11 +81,14 @@ function ProductVariants({
                         ? "product-variants__option product-variants__option--selected"
                         : "product-variants__option"
                     }
-                    disabled={isOutOfStock}
+                    disabled={isUnavailable || isOutOfStock}
                     onClick={() => onOptionChange(type, value)}
                   >
                     {value}
 
+                    {isUnavailable && (
+                      <span className="unavailable-option">Unavailable</span>
+                    )}
                     {isOutOfStock && (
                       <span className="out-of-stock">Out of stock</span>
                     )}
