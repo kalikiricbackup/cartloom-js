@@ -61,3 +61,10 @@
   font-size: 0.6rem;
   color: #d92d4b;
 }
+
+.unavailable-option {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.6rem;
+  color: #7b8798;
+}

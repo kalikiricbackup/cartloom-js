@@ -60,10 +60,10 @@ function ProductCard({ product }: ProductCardProps) {
           <p className="plp-product-card__discount">
             {discountPercentage}% off
           </p>
-          <div className="plp-product-card__features">
+          {/* <div className="plp-product-card__features">
             <span>⭐ Assured</span>
             <span>🚚 Fast Delivery</span>
-          </div>
+          </div> */}
         </Link>
         <Button onClick={() => console.log(`Add ${product.name} to cart`)}>
           Add to Cart

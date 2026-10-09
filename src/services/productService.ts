@@ -17,3 +17,15 @@ export const getProducts = async (
 
   return response.data;
 };
+
+export const getProductById = async (
+  id: number,
+  signal?: AbortSignal,
+): Promise<Product> => {
+  const response = await apiClient.get<Product>(
+    API_ENDPOINTS.PRODUCTS.BY_ID(id),
+    { signal },
+  );
+
+  return response.data;
+};

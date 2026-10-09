@@ -30,10 +30,8 @@ export interface ProductVariant {
   productId?: number;
   slug?: string;
   options: ProductOption[];
-
   price: number;
   originalPrice: number;
-
   stock: number;
   images: string[];
 }
@@ -44,9 +42,6 @@ export interface Product {
   category: string;
   subCategory: string;
   brand: string;
-  // price: number;
-  // discountPercentage: number;
-  // originalPrice: number;
   rating: number;
   reviews: number;
   badge?: string | null;

@@ -1,8 +1,25 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
+import { signedOut } from "../../store/slices/authSlice";
+import { useAppDispatch, useAppSelector } from "../../store/store";
 import "./Header.css";
 
 function Header() {
-  const isAuthenticated = Boolean(localStorage.getItem("accessToken"));
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    const shouldLogout = window.confirm("Are you sure you want to log out?");
+
+    if (!shouldLogout) {
+      return;
+    }
+
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    dispatch(signedOut());
+    navigate("/", { replace: true });
+  };
 
   return (
     <header className="header">
@@ -63,15 +80,13 @@ function Header() {
           </button>
 
           {isAuthenticated ? (
-            // <NavLink to="/profile" className="header__profile-button">
-            //   Logout
-            // </NavLink>
-            <button type="button" className="header__login-button" onClick={() => {
-              localStorage.removeItem("accessToken");
-              window.location.href = "/";
-            }}>
+            <button
+              type="button"
+              className="header__login-button"
+              onClick={handleLogout}
+            >
               Logout
-            </button> 
+            </button>
           ) : (
             <NavLink to="/login" className="header__login-button">
               Login / Signup
