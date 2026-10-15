@@ -12,7 +12,7 @@ export interface HomeCategory {
   description: string;
   productCount: number;
 }
- 
+
 export interface HomePageData {
   topCategories: HomeCategory[];
   bestDeals: Product[];
@@ -26,7 +26,7 @@ export interface ProductOption {
 }
 
 export interface ProductVariant {
-  id: string;
+  variantid: string;
   productId?: number;
   slug?: string;
   options: ProductOption[];

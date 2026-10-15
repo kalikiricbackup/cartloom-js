@@ -34,7 +34,7 @@ function createVariantWithOptions(
   imageText: string,
 ) {
   return {
-    id: `product-${productId}-${variantKey}`,
+    variantid: `product-${productId}-${variantKey}`,
     options,
     price,
     originalPrice,
@@ -112,7 +112,7 @@ export const trendingProducts: Product[] = [
     ],
     variants: [
       {
-        id: "iphone15-pink-128",
+        variantid: "iphone15-pink-128",
         options: [
           {
             type: "color",
@@ -138,7 +138,7 @@ export const trendingProducts: Product[] = [
       },
 
       {
-        id: "iphone15-pink-256",
+        variantid: "iphone15-pink-256",
         options: [
           {
             type: "color",
@@ -165,7 +165,7 @@ export const trendingProducts: Product[] = [
       },
 
       {
-        id: "iphone15-blue-128",
+        variantid: "iphone15-blue-128",
         options: [
           {
             type: "color",
@@ -192,7 +192,7 @@ export const trendingProducts: Product[] = [
       },
 
       {
-        id: "iphone15-black-128",
+        variantid: "iphone15-black-128",
         options: [
           {
             type: "color",

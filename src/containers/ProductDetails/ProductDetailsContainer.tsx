@@ -1,14 +1,27 @@
 import { isAxiosError } from "axios";
 import { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
-
+import { useNavigate, useParams } from "react-router-dom";
+import ConfirmDialog from "../../components/ConfirmDialog/ConfirmDialog";
 import PageContainer from "../../components/PageContainer/PageContainer";
-import { getProductById } from "../../services/productService";
+import {
+  addProductToWishlist,
+  getWishlistErrorMessage,
+  getProductById,
+  removeProductFromWishlist,
+} from "../../services/productService";
+import {
+  addToWishlist,
+  removeFromWishlist,
+} from "../../store/slices/wishlistSlice";
+import { useAppDispatch, useAppSelector } from "../../store/store";
 import { Product } from "../../types";
 import ProductDetailsPresenter from "./ProductDetailsPresenter";
 
 function ProductDetailsContainer() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const productId = Number(id);
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -17,7 +30,14 @@ function ProductDetailsContainer() {
     Record<string, string>
   >({});
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [isWishlisted, setIsWishlisted] = useState(false);
+  const isWishlisted = useAppSelector((state) =>
+    state.wishlist.productIds.includes(productId),
+  );
+  const [isWishlistUpdating, setIsWishlistUpdating] = useState(false);
+  const [wishlistDialog, setWishlistDialog] = useState<
+    "login" | "variant" | "error" | null
+  >(null);
+  const [wishlistErrorMessage, setWishlistErrorMessage] = useState("");
 
   useEffect(() => {
     const controller = new AbortController();
@@ -38,6 +58,19 @@ function ProductDetailsContainer() {
       try {
         const response = await getProductById(productId, controller.signal);
         setProduct(response);
+
+        const initialVariant =
+          response.variants.find((variant) => variant.stock > 0) ??
+          response.variants[0];
+        setSelectedOptions(
+          initialVariant?.options.reduce(
+            (options, option) => ({
+              ...options,
+              [option.type]: option.value,
+            }),
+            {} as Record<string, string>,
+          ) ?? {},
+        );
       } catch (requestError: unknown) {
         if (controller.signal.aborted) {
           return;
@@ -111,18 +144,41 @@ function ProductDetailsContainer() {
   }
 
   const handleOptionChange = (type: string, value: string) => {
-    setSelectedOptions((current) => {
-      if (current[type] === value) {
-        const nextOptions = { ...current };
-        delete nextOptions[type];
-        return nextOptions;
-      }
+    const variantsForOption = product.variants.filter((variant) =>
+      variant.options.some(
+        (option) => option.type === type && option.value === value,
+      ),
+    );
+    const variantsMatchingOtherSelections = variantsForOption.filter(
+      (variant) =>
+        Object.entries(selectedOptions).every(
+          ([selectedType, selectedValue]) =>
+            selectedType === type ||
+            variant.options.some(
+              (option) =>
+                option.type === selectedType && option.value === selectedValue,
+            ),
+        ),
+    );
+    const nextVariant =
+      variantsMatchingOtherSelections.find((variant) => variant.stock > 0) ??
+      variantsForOption.find((variant) => variant.stock > 0) ??
+      variantsMatchingOtherSelections[0] ??
+      variantsForOption[0];
 
-      return {
-        ...current,
-        [type]: value,
-      };
-    });
+    if (!nextVariant) {
+      return;
+    }
+
+    setSelectedOptions(
+      nextVariant.options.reduce(
+        (options, option) => ({
+          ...options,
+          [option.type]: option.value,
+        }),
+        {} as Record<string, string>,
+      ),
+    );
 
     setSelectedImageIndex(0);
   };
@@ -139,6 +195,79 @@ function ProductDetailsContainer() {
       product,
       selectedVariant,
     });
+  };
+
+  const closeWishlistDialog = () => {
+    setWishlistDialog(null);
+  };
+
+  const confirmWishlistDialog = () => {
+    if (wishlistDialog === "login") {
+      closeWishlistDialog();
+      navigate("/login");
+      return;
+    }
+
+    closeWishlistDialog();
+  };
+
+  const handleWishlistChange = async () => {
+    if (!isAuthenticated) {
+      setWishlistDialog("login");
+      return;
+    }
+
+    if (!selectedVariant) {
+      setWishlistDialog("variant");
+      return;
+    }
+    console.log("selectedVariant is--", selectedVariant);
+
+    if (isWishlistUpdating) {
+      return;
+    }
+
+    setIsWishlistUpdating(true);
+
+    try {
+      if (isWishlisted) {
+        await removeProductFromWishlist(product.id);
+        dispatch(removeFromWishlist(product.id));
+      } else {
+        await addProductToWishlist({
+          product_id: product.id,
+          variant_id: selectedVariant.variantid,
+        });
+        dispatch(addToWishlist(product.id));
+      }
+    } catch (error: unknown) {
+      setWishlistErrorMessage(getWishlistErrorMessage(error));
+      setWishlistDialog("error");
+    } finally {
+      setIsWishlistUpdating(false);
+    }
+  };
+
+  const wishlistDialogContent = {
+    login: {
+      title: "Sign in to save this item",
+      message: "Please log in first to add this item to your wishlist.",
+      confirmLabel: "Go to login",
+      cancelLabel: "Maybe later",
+    },
+    variant: {
+      title: "Choose a product option",
+      message:
+        "Please select a variant combination before adding this item to your wishlist.",
+      confirmLabel: "Got it",
+      cancelLabel: "Close",
+    },
+    error: {
+      title: "Wishlist update failed",
+      message: wishlistErrorMessage,
+      confirmLabel: "Got it",
+      cancelLabel: "Close",
+    },
   };
 
   const handleShare = async () => {
@@ -164,19 +293,33 @@ function ProductDetailsContainer() {
   };
 
   return (
-    <ProductDetailsPresenter
-      product={product}
-      selectedVariant={selectedVariant}
-      selectedOptions={selectedOptions}
-      selectedImageIndex={selectedImageIndex}
-      isWishlisted={isWishlisted}
-      onOptionChange={handleOptionChange}
-      onImageChange={setSelectedImageIndex}
-      onWishlistChange={() => setIsWishlisted((current) => !current)}
-      onShare={handleShare}
-      onAddToCart={handleAddToCart}
-      onBuyNow={handleBuyNow}
-    />
+    <>
+      <ProductDetailsPresenter
+        product={product}
+        selectedVariant={selectedVariant}
+        selectedOptions={selectedOptions}
+        selectedImageIndex={selectedImageIndex}
+        isWishlisted={isWishlisted}
+        isWishlistUpdating={isWishlistUpdating}
+        onOptionChange={handleOptionChange}
+        onImageChange={setSelectedImageIndex}
+        onWishlistChange={handleWishlistChange}
+        onShare={handleShare}
+        onAddToCart={handleAddToCart}
+        onBuyNow={handleBuyNow}
+      />
+      {wishlistDialog && (
+        <ConfirmDialog
+          isOpen
+          title={wishlistDialogContent[wishlistDialog].title}
+          message={wishlistDialogContent[wishlistDialog].message}
+          confirmLabel={wishlistDialogContent[wishlistDialog].confirmLabel}
+          cancelLabel={wishlistDialogContent[wishlistDialog].cancelLabel}
+          onCancel={closeWishlistDialog}
+          onConfirm={confirmWishlistDialog}
+        />
+      )}
+    </>
   );
 }
 

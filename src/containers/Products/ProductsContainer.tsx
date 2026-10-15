@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import ProductsPresenter from "./ProductsPresenter";
 import { Product } from "../../types";
 import { getProducts } from "../../services/productService";
+import { useAppSelector } from "../../store/store";
 
 function ProductsContainer() {
   const { category } = useParams<{ category?: string }>();
@@ -19,6 +20,8 @@ function ProductsContainer() {
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
 
   const [sortBy, setSortBy] = useState("popularity");
+
+  const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -161,6 +164,7 @@ function ProductsContainer() {
       }}
       onRatingChange={setSelectedRating}
       onSortChange={setSortBy}
+      isAuthenticated={isAuthenticated}
     />
   );
 }

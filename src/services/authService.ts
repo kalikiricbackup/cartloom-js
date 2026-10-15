@@ -13,6 +13,33 @@ export interface LoginResponse {
   profile_completed: boolean;
 }
 
+export const getUserDisplayName = (
+  accessToken: string,
+  email: string,
+): string => {
+  try {
+    const payload = accessToken.split(".")[1];
+    if (payload) {
+      const claims = JSON.parse(
+        atob(payload.replace(/-/g, "+").replace(/_/g, "/")),
+      ) as Record<string, unknown>;
+      const claimName =
+        claims.name ??
+        claims.full_name ??
+        claims.given_name ??
+        claims.preferred_username;
+
+      if (typeof claimName === "string" && claimName.trim()) {
+        return claimName.trim();
+      }
+    }
+  } catch {
+    // Some access tokens are opaque and do not contain readable profile claims.
+  }
+
+  return email.split("@")[0]?.trim() || "My Account";
+};
+
 export interface RegisterRequest {
   fullName: string;
   email: string;

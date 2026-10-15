@@ -10,4 +10,9 @@ export const API_ENDPOINTS = {
   },
 
   HOME: "/home",
+
+  WISHLIST: {
+    LIST: "/wishlist",
+    BY_PRODUCT_ID: (id: number) => `/wishlist/${id}`,
+  },
 };

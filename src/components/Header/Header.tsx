@@ -1,25 +1,57 @@
 import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { signedOut } from "../../store/slices/authSlice";
 import { useAppDispatch, useAppSelector } from "../../store/store";
+import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import "./Header.css";
 
 function Header() {
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
+  const displayName = useAppSelector((state) => state.auth.displayName);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
+  const accountMenuRef = useRef<HTMLDivElement>(null);
 
-  const handleLogout = () => {
-    const shouldLogout = window.confirm("Are you sure you want to log out?");
-
-    if (!shouldLogout) {
+  useEffect(() => {
+    if (!isAccountMenuOpen) {
       return;
     }
 
+    const handleOutsideClick = (event: MouseEvent) => {
+      if (
+        event.target instanceof Node &&
+        !accountMenuRef.current?.contains(event.target)
+      ) {
+        setIsAccountMenuOpen(false);
+      }
+    };
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsAccountMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleOutsideClick);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isAccountMenuOpen]);
+
+  const handleLogout = () => {
+    setIsLogoutDialogOpen(false);
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
+    localStorage.removeItem("userName");
+    setIsAccountMenuOpen(false);
     dispatch(signedOut());
     navigate("/", { replace: true });
   };
+
+  const cancelLogout = () => setIsLogoutDialogOpen(false);
 
   return (
     <header className="header">
@@ -80,13 +112,57 @@ function Header() {
           </button>
 
           {isAuthenticated ? (
-            <button
-              type="button"
-              className="header__login-button"
-              onClick={handleLogout}
-            >
-              Logout
-            </button>
+            <div className="header__account" ref={accountMenuRef}>
+              <button
+                type="button"
+                className="header__login-button header__account-button"
+                aria-haspopup="menu"
+                aria-expanded={isAccountMenuOpen}
+                onClick={() => setIsAccountMenuOpen((isOpen) => !isOpen)}
+              >
+                <span className="header__account-name">
+                  {displayName || "My Account"}
+                </span>
+                {/* <span className="header__account-chevron" aria-hidden="true">
+                  ⌄
+                </span> */}
+              </button>
+              {isAccountMenuOpen && (
+                <div className="header__account-menu" role="menu">
+                  <NavLink
+                    to="/profile"
+                    role="menuitem"
+                    onClick={() => setIsAccountMenuOpen(false)}
+                  >
+                    My Profile
+                  </NavLink>
+                  <NavLink
+                    to="/orders"
+                    role="menuitem"
+                    onClick={() => setIsAccountMenuOpen(false)}
+                  >
+                    Orders
+                  </NavLink>
+                  <NavLink
+                    to="/addresses"
+                    role="menuitem"
+                    onClick={() => setIsAccountMenuOpen(false)}
+                  >
+                    Addresses
+                  </NavLink>
+                  <button
+                    type="button"
+                    role="menuitem"
+                    onClick={() => {
+                      setIsAccountMenuOpen(false);
+                      setIsLogoutDialogOpen(true);
+                    }}
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <NavLink to="/login" className="header__login-button">
               Login / Signup
@@ -94,6 +170,15 @@ function Header() {
           )}
         </div>
       </div>
+      <ConfirmDialog
+        isOpen={isLogoutDialogOpen}
+        title="Leaving so soon?"
+        message="Are you sure you want to log out of your CartLoom account?"
+        cancelLabel="Stay signed in"
+        confirmLabel="Log out"
+        onCancel={cancelLogout}
+        onConfirm={handleLogout}
+      />
     </header>
   );
 }

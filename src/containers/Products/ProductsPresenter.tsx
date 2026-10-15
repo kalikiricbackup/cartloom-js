@@ -24,6 +24,7 @@ interface ProductsPresenterProps {
   onPriceChange: (min: number, max: number) => void;
   onRatingChange: (rating: number | null) => void;
   onSortChange: (sort: string) => void;
+  isAuthenticated: boolean;
 }
 
 function ProductsPresenter({
@@ -45,6 +46,7 @@ function ProductsPresenter({
   onPriceChange,
   onRatingChange,
   onSortChange,
+  isAuthenticated,
 }: ProductsPresenterProps) {
   return (
     <PageContainer>
@@ -104,7 +106,7 @@ function ProductsPresenter({
               {error}
             </p>
           ) : products.length > 0 ? (
-            <ProductGrid products={products} />
+            <ProductGrid products={products} showWishlist={isAuthenticated} />
           ) : (
             <h4 className="products-empty-state">
               No item(s) found based on your filter.

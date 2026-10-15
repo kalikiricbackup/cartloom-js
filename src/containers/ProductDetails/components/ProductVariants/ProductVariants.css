@@ -39,7 +39,7 @@
   cursor: pointer;
 }
 
-.product-variants__option:hover:not(:disabled) {
+.product-variants__option:hover {
   border-color: #0877f9;
 }
 
@@ -49,10 +49,21 @@
   font-weight: 700;
 }
 
-.product-variants__option:disabled {
+.product-variants__option--unavailable {
+  border-style: dotted;
+  border-color: #8798ae;
+  /* border: 2px dotted #8798ae; */
   color: #a4afbf;
   background: #f5f6f8;
-  cursor: not-allowed;
+}
+
+.product-variants__option--unavailable:hover {
+  border-color: #0877f9;
+}
+
+.product-variants__option--selected.product-variants__option--unavailable {
+  border-style: dotted;
+  border-color: #0877f9;
 }
 
 .out-of-stock {

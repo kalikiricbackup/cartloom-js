@@ -82,7 +82,11 @@ function HomePresenter({
             {error}
           </p>
         ) : visibleProducts.length > 0 ? (
-          <ProductGrid products={visibleProducts} columns={4} />
+          <ProductGrid
+            products={visibleProducts}
+            columns={4}
+            showWishlist={false}
+          />
         ) : (
           <h4 className="products-empty-state">
             No item(s) found based on your filter.

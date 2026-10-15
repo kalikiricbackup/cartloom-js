@@ -43,7 +43,8 @@ function ProductVariants({
         return (
           <section key={type} className="product-variants__group">
             <h3>
-              {label}: <span>{selectedOptions[type] ?? "Select an option"}</span>
+              {label}:{" "}
+              <span>{selectedOptions[type] ?? "Select an option"}</span>
             </h3>
 
             <div className="product-variants__options">
@@ -71,24 +72,28 @@ function ProductVariants({
                 const isOutOfStock =
                   !isUnavailable &&
                   matchingVariants.every((variant) => variant.stock === 0);
+                const optionClassName = [
+                  "product-variants__option",
+                  isSelected && "product-variants__option--selected",
+                  (isUnavailable || isOutOfStock) &&
+                    "product-variants__option--unavailable",
+                ]
+                  .filter(Boolean)
+                  .join(" ");
 
                 return (
                   <button
                     key={value}
                     type="button"
-                    className={
-                      isSelected
-                        ? "product-variants__option product-variants__option--selected"
-                        : "product-variants__option"
-                    }
-                    disabled={isUnavailable || isOutOfStock}
+                    className={optionClassName}
+                    aria-pressed={isSelected}
                     onClick={() => onOptionChange(type, value)}
                   >
                     {value}
 
-                    {isUnavailable && (
+                    {/* {isUnavailable && (
                       <span className="unavailable-option">Unavailable</span>
-                    )}
+                    )} */}
                     {isOutOfStock && (
                       <span className="out-of-stock">Out of stock</span>
                     )}
