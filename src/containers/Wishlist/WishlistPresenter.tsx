@@ -1,13 +1,17 @@
 import PageContainer from "../../components/PageContainer/PageContainer";
 import ProductGrid from "../../components/ProductGrid/ProductGrid";
-import { Product } from "../../types";
+import { WishlistItem } from "../../services/productService";
 import "./WishlistPresenter.css";
 
 interface WishlistPresenterProps {
-  products: Product[];
+  items: WishlistItem[];
+  isLoading: boolean;
+  error: string;
 }
 
-function WishlistPresenter({ products }: WishlistPresenterProps) {
+function WishlistPresenter({ items, isLoading, error }: WishlistPresenterProps) {
+  const products = items.map((item) => item.product);
+
   return (
     <PageContainer>
       <div className="wishlist-page">
@@ -20,8 +24,16 @@ function WishlistPresenter({ products }: WishlistPresenterProps) {
           <h1>My Wishlist</h1>
           <span>{products.length} Products</span>
         </header>
-        {products.length > 0 ? (
-          <ProductGrid products={products} columns={4} />
+        {isLoading ? (
+          <p role="status">Loading wishlist...</p>
+        ) : error ? (
+          <p role="alert">{error}</p>
+        ) : products.length > 0 ? (
+          <ProductGrid
+            products={products}
+            selectedVariants={items.map((item) => item.variant)}
+            columns={4}
+          />
         ) : (
           <p className="wishlist-page__empty">Your wishlist is empty.</p>
         )}
