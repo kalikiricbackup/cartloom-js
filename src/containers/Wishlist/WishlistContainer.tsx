@@ -28,7 +28,7 @@ function WishlistContainer() {
         const response = await getWishlist(controller.signal);
         setWishlistItems(response.items);
         dispatch(
-         // setWishlistProductIds(response.items.map((item) => item.product_id)),
+          setWishlistProductIds(response.items.map((item) => item.product_id)),
         );
       } catch (requestError: unknown) {
         if (controller.signal.aborted) {
