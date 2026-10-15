@@ -1,22 +1,26 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface AuthState {
   isAuthenticated: boolean;
+  displayName: string;
 }
 
 const initialState: AuthState = {
   isAuthenticated: Boolean(localStorage.getItem("accessToken")),
+  displayName: localStorage.getItem("userName") ?? "",
 };
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    signedIn(state) {
+    signedIn(state, action: PayloadAction<string>) {
       state.isAuthenticated = true;
+      state.displayName = action.payload;
     },
     signedOut(state) {
       state.isAuthenticated = false;
+      state.displayName = "";
     },
   },
 });

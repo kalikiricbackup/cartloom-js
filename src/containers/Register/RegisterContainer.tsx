@@ -42,8 +42,9 @@ function RegisterContainer() {
     setMessage("");
 
     try {
+      const fullName = String(formData.get("name")).trim();
       const response = await register({
-        fullName: String(formData.get("name")).trim(),
+        fullName,
         email: String(formData.get("email")).trim(),
         password: String(formData.get("password")),
         gender: Number(formData.get("gender")),
@@ -53,7 +54,8 @@ function RegisterContainer() {
 
       localStorage.setItem("accessToken", response.access_token);
       localStorage.setItem("refreshToken", response.refresh_token);
-      dispatch(signedIn());
+      localStorage.setItem("userName", fullName);
+      dispatch(signedIn(fullName));
       navigate("/");
     } catch (error: unknown) {
       if (isAxiosError<{ detail?: string; message?: string }>(error)) {

@@ -13,6 +13,7 @@ interface ProductDetailsPresenterProps {
   selectedOptions: Record<string, string>;
   selectedImageIndex: number;
   isWishlisted: boolean;
+  isWishlistUpdating: boolean;
   onOptionChange: (type: string, value: string) => void;
   onImageChange: (index: number) => void;
   onWishlistChange: () => void;
@@ -27,6 +28,7 @@ function ProductDetailsPresenter({
   selectedOptions,
   selectedImageIndex,
   isWishlisted,
+  isWishlistUpdating,
   onOptionChange,
   onImageChange,
   onWishlistChange,
@@ -73,8 +75,12 @@ function ProductDetailsPresenter({
                     type="button"
                     className={isWishlisted ? "wishlist-active" : ""}
                     onClick={onWishlistChange}
+                    aria-pressed={isWishlisted}
+                    disabled={isWishlistUpdating}
                   >
-                    {isWishlisted ? "♥" : "♡"} Add to Wishlist
+                    {isWishlistUpdating
+                      ? "Updating wishlist…"
+                      : `${isWishlisted ? "♥" : "♡"} ${isWishlisted ? "Remove from" : "Add to"} Wishlist`}
                   </button>
                 </div>
               </>
@@ -83,18 +89,19 @@ function ProductDetailsPresenter({
 
           {/* RIGHT */}
           <section className="product-details__right">
-            <ProductVariants
-              product={product}
-              selectedOptions={selectedOptions}
-              onOptionChange={onOptionChange}
-            />
-
             {displayVariant && (
               <>
                 <ProductInformation
                   product={product}
                   variant={displayVariant}
                 />
+
+                <ProductVariants
+                  product={product}
+                  selectedOptions={selectedOptions}
+                  onOptionChange={onOptionChange}
+                />
+
                 <ProductOffers offers={product.offers} />
 
                 <div className="product-details__purchase">

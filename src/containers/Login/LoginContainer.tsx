@@ -1,7 +1,7 @@
 import { isAxiosError } from "axios";
 import { FormEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../services/authService";
+import { getUserDisplayName, login } from "../../services/authService";
 import { signedIn } from "../../store/slices/authSlice";
 import { useAppDispatch } from "../../store/store";
 import LoginPresenter from "./LoginPresenter";
@@ -9,7 +9,7 @@ import LoginPresenter from "./LoginPresenter";
 function LoginContainer() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [activeTab, setActiveTab] = useState<"mobile" | "email">("mobile");
+  const [activeTab, setActiveTab] = useState<"mobile" | "email">("email");
   const [showOtp, setShowOtp] = useState(false);
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
@@ -50,14 +50,17 @@ function LoginContainer() {
     setMessage("");
 
     try {
+      const email = String(formData.get("email")).trim();
       const response = await login({
-        email: String(formData.get("email")).trim(),
+        email,
         password: String(formData.get("password")),
       });
 
       localStorage.setItem("accessToken", response.access_token);
       localStorage.setItem("refreshToken", response.refresh_token);
-      dispatch(signedIn());
+      const displayName = getUserDisplayName(response.access_token, email);
+      localStorage.setItem("userName", displayName);
+      dispatch(signedIn(displayName));
       navigate("/");
     } catch (error: unknown) {
       if (isAxiosError<{ detail?: string; message?: string }>(error)) {
