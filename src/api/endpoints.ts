@@ -15,4 +15,9 @@ export const API_ENDPOINTS = {
     LIST: "/wishlist",
     BY_PRODUCT_ID: (id: number) => `/wishlist/${id}`,
   },
+
+  ADDRESSES: {
+    LIST: "/addresses",
+    BY_ID: (id: number) => `/addresses/${id}`,
+  },
 };

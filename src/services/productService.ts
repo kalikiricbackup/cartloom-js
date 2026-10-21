@@ -5,7 +5,21 @@ import { Product } from "../types";
 
 export interface ProductListResponse {
   count: number;
+  page?: number;
+  pageSize?: number;
+  totalPages?: number;
   products: Product[];
+}
+
+export interface ProductQueryParams {
+  category?: string;
+  brand?: string;
+  rating?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  page?: number;
+  page_size?: number;
+  sort?: string;
 }
 
 export interface WishlistItem {
@@ -22,11 +36,12 @@ export interface WishlistResponse {
 }
 
 export const getProducts = async (
+  params: ProductQueryParams,
   signal?: AbortSignal,
 ): Promise<ProductListResponse> => {
   const response = await apiClient.get<ProductListResponse>(
     API_ENDPOINTS.PRODUCTS.LIST,
-    { signal },
+    { params, signal },
   );
 
   return response.data;

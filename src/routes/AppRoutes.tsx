@@ -10,6 +10,8 @@ import Login from "../pages/Login/Login";
 import ProtectedRoute from "./ProtectedRoute";
 import AccountSection from "../pages/Account/AccountSection";
 import MyProfile from "../pages/MyProfile/MyProfile";
+import Addresses from "../pages/Addresses/Addresses";
+import AddAddress from "../pages/Addresses/AddAddress";
 
 function AppRoutes() {
   return (
@@ -23,7 +25,8 @@ function AppRoutes() {
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/orders" element={<AccountSection />} />
-            <Route path="/addresses" element={<AccountSection />} />
+            <Route path="/addresses" element={<Addresses />} />
+            <Route path="/addresses/new" element={<AddAddress />} />
           </Route>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Login />} />

@@ -1,73 +1,69 @@
-import { productRating } from "../../services/mockApi";
 import "./ProductFilters.css";
 
 interface ProductFiltersProps {
-  productCategories: string[];
   productBrands: string[];
-  selectedCategory: string;
-  selectedBrands: string[];
+  selectedBrand: string;
   minPrice: number;
   maxPrice: number;
   selectedRating: number | null;
-  onCategoryChange: (category: string) => void;
-  onBrandsChange: (brands: string[]) => void;
+  onBrandChange: (brand: string) => void;
   onPriceChange: (min: number, max: number) => void;
   onRatingChange: (rating: number | null) => void;
 }
 
 function ProductFilters({
-  productCategories,
   productBrands,
-  selectedCategory,
-  selectedBrands,
+  selectedBrand,
   minPrice,
   maxPrice,
   selectedRating,
-  onCategoryChange,
-  onBrandsChange,
+  onBrandChange,
   onPriceChange,
   onRatingChange,
 }: ProductFiltersProps) {
-  const handleBrandChange = (brand: string) => {
-    if (selectedBrands.includes(brand)) {
-      onBrandsChange(selectedBrands.filter((item) => item !== brand));
-    } else {
-      onBrandsChange([...selectedBrands, brand]);
-    }
-  };
-
   return (
     <div className="product-filters">
       <h2>Filters</h2>
 
-      {/* Category */}
+      {/* Brand */}
       <section className="filter-section">
-        <h3>Category</h3>
+        <h3>Brand</h3>
         <select
-          value={selectedCategory}
-          onChange={(event) => onCategoryChange(event.target.value)}
+          value={selectedBrand}
+          onChange={(event) => onBrandChange(event.target.value)}
         >
-          {productCategories.map((category) => (
-            <option key={category} value={category}>
-              {category}
+          <option value="">All brands</option>
+          {productBrands.map((brand) => (
+            <option key={brand} value={brand}>
+              {brand}
             </option>
           ))}
         </select>
       </section>
 
-      {/* Brand */}
+      {/* Rating */}
       <section className="filter-section">
-        <h3>Brand</h3>
-        {productBrands.map((brand) => (
-          <label key={brand} className="filter-checkbox">
+        <h3>Rating</h3>
+        {[5, 4, 3, 2, 1].map((rating) => (
+          <label key={rating} className="filter-rating">
             <input
-              type="checkbox"
-              checked={selectedBrands.includes(brand)}
-              onChange={() => handleBrandChange(brand)}
+              type="radio"
+              name="product-rating"
+              checked={selectedRating === rating}
+              onChange={() => onRatingChange(rating)}
             />
-            <span>{brand}</span>
+            <span>{rating}★ &amp; up</span>
           </label>
         ))}
+        {selectedRating !== null && (
+          <button
+            type="button"
+            className="clear-rating"
+            onClick={() => onRatingChange(null)}
+          >
+            Clear rating
+          </button>
+        )}
       </section>
 
       {/* Price */}
@@ -78,9 +74,24 @@ function ProductFilters({
           <span>₹{maxPrice.toLocaleString("en-IN")}</span>
         </div>
 
+        <label className="minimum-price">
+          Minimum price
+          <input
+            type="number"
+            min="0"
+            max={maxPrice}
+            value={minPrice}
+            onChange={(event) =>
+              onPriceChange(
+                Math.min(Number(event.target.value), maxPrice),
+                maxPrice,
+              )
+            }
+          />
+        </label>
         <input
           type="range"
-          min="0"
+          min={minPrice}
           max="150000"
           step="1000"
           value={maxPrice}
@@ -88,36 +99,6 @@ function ProductFilters({
             onPriceChange(minPrice, Number(event.target.value))
           }
         />
-      </section>
-
-      {/* Rating */}
-      <section className="filter-section">
-        <h3>Rating</h3>
-        {productRating.map((rating) => (
-          <label key={rating} className="filter-rating">
-            <input
-              type="radio"
-              name="rating"
-              checked={selectedRating === rating}
-              onChange={() => onRatingChange(rating)}
-            />
-            <span>
-              {"★".repeat(rating)}
-              {"☆".repeat(5 - rating)}
-            </span>
-            <small>& up</small>
-          </label>
-        ))}
-
-        {selectedRating !== null && (
-          <button
-            type="button"
-            className="clear-rating"
-            onClick={() => onRatingChange(null)}
-          >
-            Clear rating
-          </button>
-        )}
       </section>
     </div>
   );

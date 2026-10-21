@@ -9,30 +9,76 @@ import { useAppSelector } from "../../store/store";
 function ProductsContainer() {
   const { category } = useParams<{ category?: string }>();
   const [products, setProducts] = useState<Product[]>([]);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const routeCategory = category ?? "All";
-  const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
+  const routeCategory = category;
+  const [selectedBrand, setSelectedBrand] = useState("");
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(150000);
-
-  const [selectedRating, setSelectedRating] = useState<number | null>(null);
-
   const [sortBy, setSortBy] = useState("popularity");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedRating, setSelectedRating] = useState<number | null>(null);
+  const [brandOptions, setBrandOptions] = useState<{
+    category: string | undefined;
+    values: string[];
+  }>({ category: routeCategory, values: [] });
 
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
 
   useEffect(() => {
+    setSelectedBrand("");
+    setMinPrice(0);
+    setMaxPrice(150000);
+    setSortBy("popularity");
+    setCurrentPage(1);
+    setSelectedRating(null);
+  }, [routeCategory]);
+
+  useEffect(() => {
     const controller = new AbortController();
+    setIsLoading(true);
+    setError("");
 
     async function loadProducts() {
-      setIsLoading(true);
-      setError("");
-
       try {
-        const response = await getProducts(controller.signal);
+        const params = {
+          ...(routeCategory ? { category: routeCategory } : {}),
+          ...(selectedBrand ? { brand: selectedBrand } : {}),
+          ...(selectedRating !== null ? { rating: selectedRating } : {}),
+          ...(minPrice > 0 ? { minPrice } : {}),
+          ...(maxPrice < 150000 ? { maxPrice } : {}),
+          ...(currentPage > 1 ? { page: currentPage } : {}),
+          ...(currentPage > 1 ? { page_size: 20 } : {}),
+          ...(sortBy !== "popularity" ? { sort: sortBy } : {}),
+        };
+        const response = await getProducts(params, controller.signal);
         setProducts(response.products);
+        setTotalProducts(response.count);
+        setTotalPages(
+          response.totalPages ??
+            Math.max(1, Math.ceil(response.count / (response.pageSize ?? 20))),
+        );
+        setCurrentPage(response.page ?? currentPage);
+        const responseBrands = response.products.map(
+          (product) => product.brand,
+        );
+        setBrandOptions((current) => {
+          if (current.category !== routeCategory) {
+            return {
+              category: routeCategory,
+              values: Array.from(new Set(responseBrands)),
+            };
+          }
+          if (selectedBrand) {
+            return current;
+          }
+          return {
+            ...current,
+            values: Array.from(new Set([...current.values, ...responseBrands])),
+          };
+        });
       } catch (requestError: unknown) {
         if (controller.signal.aborted) {
           return;
@@ -56,114 +102,79 @@ function ProductsContainer() {
       }
     }
 
-    void loadProducts();
+    const requestTimeout = window.setTimeout(() => {
+      void loadProducts();
+    }, 300);
 
-    return () => controller.abort();
-  }, []);
-
-  const categoryProducts = useMemo(
-    () =>
-      routeCategory === "All"
-        ? products
-        : products.filter((product) => product.category === routeCategory),
-    [products, routeCategory],
-  );
-
-  const productCategories = useMemo(
-    () => [
-      "All",
-      ...Array.from(
-        new Set(categoryProducts.map((product) => product.subCategory)),
-      ),
-    ],
-    [categoryProducts],
-  );
-
-  const productBrands = useMemo(() => {
-    return Array.from(
-      new Set(categoryProducts.map((product) => product.brand)),
-    );
-  }, [categoryProducts]);
-
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-    setSelectedBrands([]);
-  };
-
-  const filteredProducts = useMemo(() => {
-    let result = [...categoryProducts];
-
-    // Subcategory
-    if (selectedCategory !== "All") {
-      result = result.filter(
-        (product) => product.subCategory === selectedCategory,
-      );
-    }
-    // Brand
-    if (selectedBrands.length > 0) {
-      result = result.filter((product) =>
-        selectedBrands.includes(product.brand),
-      );
-    }
-    // Price
-    result = result.filter(
-      (product) =>
-        product.variants[0]?.price >= minPrice &&
-        product.variants[0]?.price <= maxPrice,
-    );
-    // Rating
-    if (selectedRating !== null) {
-      result = result.filter((product) => product.rating >= selectedRating);
-    }
-    // Sorting
-    if (sortBy === "price-low") {
-      result.sort((a, b) => a.variants[0]?.price - b.variants[0]?.price);
-    }
-    if (sortBy === "price-high") {
-      result.sort((a, b) => b.variants[0]?.price - a.variants[0]?.price);
-    }
-
-    if (sortBy === "rating") {
-      result.sort((a, b) => b.rating - a.rating);
-    }
-
-    if (sortBy === "popularity") {
-      result.sort((a, b) => b.reviews - a.reviews);
-    }
-    return result;
+    return () => {
+      window.clearTimeout(requestTimeout);
+      controller.abort();
+    };
   }, [
-    categoryProducts,
-    selectedCategory,
-    selectedBrands,
+    routeCategory,
+    selectedBrand,
+    selectedRating,
     minPrice,
     maxPrice,
-    selectedRating,
     sortBy,
+    currentPage,
   ]);
+
+  const productBrands = useMemo(() => {
+    const brands = new Set(
+      brandOptions.category === routeCategory ? brandOptions.values : [],
+    );
+    if (selectedBrand) {
+      brands.add(selectedBrand);
+    }
+    return Array.from(brands);
+  }, [brandOptions, routeCategory, selectedBrand]);
+
+  const handleBrandChange = (brand: string) => {
+    setSelectedBrand(brand);
+    setCurrentPage(1);
+  };
+
+  const handlePriceChange = (min: number, max: number) => {
+    setMinPrice(min);
+    setMaxPrice(max);
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (sort: string) => {
+    setSortBy(sort);
+    setCurrentPage(1);
+  };
+
+  const handleRatingChange = (rating: number | null) => {
+    setSelectedRating(rating);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(Math.min(Math.max(page, 1), totalPages));
+  };
 
   return (
     <ProductsPresenter
       category={category}
-      products={filteredProducts}
-      totalProducts={filteredProducts.length}
+      products={products}
+      totalProducts={totalProducts}
+      currentPage={currentPage}
+      totalPages={totalPages}
       isLoading={isLoading}
       error={error}
-      productCategories={productCategories}
       productBrands={productBrands}
-      selectedCategory={selectedCategory}
-      selectedBrands={selectedBrands}
+      selectedBrand={selectedBrand}
       minPrice={minPrice}
       maxPrice={maxPrice}
       selectedRating={selectedRating}
       sortBy={sortBy}
-      onCategoryChange={handleCategoryChange}
-      onBrandsChange={setSelectedBrands}
-      onPriceChange={(min, max) => {
-        setMinPrice(min);
-        setMaxPrice(max);
-      }}
-      onRatingChange={setSelectedRating}
-      onSortChange={setSortBy}
+      onBrandChange={handleBrandChange}
+      onPriceChange={handlePriceChange}
+      onRatingChange={handleRatingChange}
+      onSortChange={handleSortChange}
+      onPageChange={handlePageChange}
       isAuthenticated={isAuthenticated}
     />
   );

@@ -105,6 +105,7 @@ function ProductDetailsContainer() {
     if (!product) {
       return undefined;
     }
+    console.log("came here after selecting");
 
     return product.variants.find((variant) =>
       variant.options.every(
