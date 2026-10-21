@@ -30,29 +30,45 @@
   background: #ffffff;
 }
 
-.filter-checkbox,
+.minimum-price {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+  color: #506887;
+  font-size: 0.82rem;
+}
+
+.minimum-price input {
+  width: 100%;
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid #d5dfed;
+  border-radius: 6px;
+  color: #173268;
+}
+
 .filter-rating {
   display: flex;
   align-items: center;
-  gap: 7px;
+  gap: 8px;
   margin-bottom: 9px;
   color: #506887;
   font-size: 0.82rem;
   cursor: pointer;
 }
 
-.filter-checkbox input,
 .filter-rating input {
   margin: 0;
 }
 
-.filter-rating span {
-  color: #f2a900;
-  letter-spacing: 1px;
-}
-
-.filter-rating small {
-  color: #7085a8;
+.clear-rating {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #3779ee;
+  font-size: 0.78rem;
+  cursor: pointer;
 }
 
 .price-values {
@@ -65,13 +81,4 @@
 
 .filter-section input[type="range"] {
   width: 100%;
-}
-
-.clear-rating {
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: #3779ee;
-  font-size: 0.78rem;
-  cursor: pointer;
 }
