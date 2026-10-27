@@ -52,6 +52,12 @@ function ConfirmDialog({
     return null;
   }
 
+  const modalRoot = document.getElementById("modal-root");
+
+  if (!modalRoot) {
+    throw new Error('Modal root element "#modal-root" was not found.');
+  }
+
   return createPortal(
     <div
       className="confirm-dialog-backdrop"
@@ -96,7 +102,7 @@ function ConfirmDialog({
         </div>
       </section>
     </div>,
-    document.body,
+    modalRoot,
   );
 }
 

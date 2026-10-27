@@ -82,16 +82,16 @@ function Header() {
               Wishlist
             </NavLink>
           )}
-
-          <NavLink
-            to="/cart"
-            className={({ isActive }) =>
-              isActive ? "header__link header__link--active" : "header__link"
-            }
-          >
-            Cart (0)
-          </NavLink>
-
+          {isAuthenticated && (
+            <NavLink
+              to="/cart"
+              className={({ isActive }) =>
+                isActive ? "header__link header__link--active" : "header__link"
+              }
+            >
+              Cart
+            </NavLink>
+          )}
           <NavLink
             to="/help"
             className={({ isActive }) =>

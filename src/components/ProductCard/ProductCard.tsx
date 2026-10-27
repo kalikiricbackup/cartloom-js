@@ -37,6 +37,9 @@ function ProductCard({
   const [wishlistError, setWishlistError] = useState("");
   const firstVariant = product.variants[0];
   const displayVariant = selectedVariant ?? firstVariant;
+  const productDetailsUrl = displayVariant
+    ? `/productdetails/${product.id}?variant=${encodeURIComponent(displayVariant.variantid)}`
+    : `/productdetails/${product.id}`;
   const firstImage = displayVariant?.images[0];
   const discountPercentage = displayVariant
     ? Math.round(
@@ -93,7 +96,7 @@ function ProductCard({
     <article className="plp-product-card">
       <div className="plp-product-card__image">
         <Link
-          to={`/productdetails/${product.id}`}
+          to={productDetailsUrl}
           className="plp-product-card__image-link"
           aria-label={`View ${product.name}`}
         >
@@ -117,10 +120,7 @@ function ProductCard({
         )}
       </div>
       <div className="plp-product-card__content">
-        <Link
-          to={`/productdetails/${product.id}`}
-          className="plp-product-card__link"
-        >
+        <Link to={productDetailsUrl} className="plp-product-card__link">
           <h2>{product.name}</h2>
           <div className="plp-product-card__rating">
             <span>★ {product.rating}</span>

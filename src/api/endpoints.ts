@@ -16,6 +16,12 @@ export const API_ENDPOINTS = {
     BY_PRODUCT_ID: (id: number) => `/wishlist/${id}`,
   },
 
+  CART: {
+    LIST: "/cart",
+    ITEMS: "/cart/items",
+    ITEM_BY_ID: (id: number) => `/cart/items/${id}`,
+  },
+
   ADDRESSES: {
     LIST: "/addresses",
     BY_ID: (id: number) => `/addresses/${id}`,

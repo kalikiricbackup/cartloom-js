@@ -14,6 +14,9 @@ interface ProductDetailsPresenterProps {
   selectedImageIndex: number;
   isWishlisted: boolean;
   isWishlistUpdating: boolean;
+  isAddingToCart: boolean;
+  isAddedToCart: boolean;
+  addToCartError: string;
   onOptionChange: (type: string, value: string) => void;
   onImageChange: (index: number) => void;
   onWishlistChange: () => void;
@@ -29,6 +32,9 @@ function ProductDetailsPresenter({
   selectedImageIndex,
   isWishlisted,
   isWishlistUpdating,
+  isAddingToCart,
+  isAddedToCart,
+  addToCartError,
   onOptionChange,
   onImageChange,
   onWishlistChange,
@@ -109,11 +115,20 @@ function ProductDetailsPresenter({
                     type="button"
                     className="product-details__cart-button"
                     onClick={onAddToCart}
-                    disabled={!selectedVariant || selectedVariant.stock === 0}
+                    disabled={
+                      !selectedVariant ||
+                      selectedVariant.stock === 0 ||
+                      isAddingToCart ||
+                      isAddedToCart
+                    }
                   >
                     {selectedVariant?.stock === 0
                       ? "Out of Stock"
-                      : "Add to Cart"}
+                      : isAddingToCart
+                        ? "Adding…"
+                        : isAddedToCart
+                          ? "Added to Cart"
+                          : "Add to Cart"}
                   </button>
                   <button
                     type="button"
@@ -124,6 +139,11 @@ function ProductDetailsPresenter({
                     Buy Now
                   </button>
                 </div>
+                {addToCartError && (
+                  <p className="product-details__cart-error" role="alert">
+                    {addToCartError}
+                  </p>
+                )}
               </>
             )}
           </section>

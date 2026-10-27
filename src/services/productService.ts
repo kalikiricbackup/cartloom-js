@@ -116,7 +116,6 @@ export const addProductToWishlist = async (
   payload: AddToWishlistRequest,
 ): Promise<AddToWishlistResponse> => {
   const accessToken = localStorage.getItem("accessToken");
-  console.log("access tocken---", accessToken);
 
   if (!accessToken) {
     throw new Error("Your login session has expired. Please sign in again.");
