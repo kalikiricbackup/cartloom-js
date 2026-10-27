@@ -1,8 +1,9 @@
 import { isAxiosError } from "axios";
 import { useEffect, useMemo, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import ConfirmDialog from "../../components/ConfirmDialog/ConfirmDialog";
 import PageContainer from "../../components/PageContainer/PageContainer";
+import { addItemToCart } from "../../services/cartService";
 import {
   addProductToWishlist,
   getWishlistErrorMessage,
@@ -19,6 +20,8 @@ import ProductDetailsPresenter from "./ProductDetailsPresenter";
 
 function ProductDetailsContainer() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const requestedVariantId = searchParams.get("variant");
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
@@ -34,6 +37,11 @@ function ProductDetailsContainer() {
     state.wishlist.productIds.includes(productId),
   );
   const [isWishlistUpdating, setIsWishlistUpdating] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  const [addedCartVariantIds, setAddedCartVariantIds] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const [addToCartError, setAddToCartError] = useState("");
   const [wishlistDialog, setWishlistDialog] = useState<
     "login" | "variant" | "error" | null
   >(null);
@@ -46,6 +54,8 @@ function ProductDetailsContainer() {
       setProduct(null);
       setSelectedOptions({});
       setSelectedImageIndex(0);
+      setAddedCartVariantIds(new Set());
+      setAddToCartError("");
       setError("");
 
       if (!id || !Number.isInteger(productId)) {
@@ -60,6 +70,9 @@ function ProductDetailsContainer() {
         setProduct(response);
 
         const initialVariant =
+          response.variants.find(
+            (variant) => variant.variantid === requestedVariantId,
+          ) ??
           response.variants.find((variant) => variant.stock > 0) ??
           response.variants[0];
         setSelectedOptions(
@@ -99,14 +112,12 @@ function ProductDetailsContainer() {
     void loadProduct();
 
     return () => controller.abort();
-  }, [id, productId]);
+  }, [id, productId, requestedVariantId]);
 
   const selectedVariant = useMemo(() => {
     if (!product) {
       return undefined;
     }
-    console.log("came here after selecting");
-
     return product.variants.find((variant) =>
       variant.options.every(
         (option) => selectedOptions[option.type] === option.value,
@@ -184,11 +195,40 @@ function ProductDetailsContainer() {
     setSelectedImageIndex(0);
   };
 
-  const handleAddToCart = () => {
-    console.log("Add to Cart", {
-      product,
-      selectedVariant,
-    });
+  const handleAddToCart = async () => {
+    if (!selectedVariant || isAddingToCart) {
+      return;
+    }
+
+    setIsAddingToCart(true);
+    setAddToCartError("");
+
+    try {
+      await addItemToCart({
+        parentId: product.id,
+        variant_id: selectedVariant.variantid,
+        quantity: 1,
+      });
+      setAddedCartVariantIds((variantIds) =>
+        new Set(variantIds).add(selectedVariant.variantid),
+      );
+    } catch (requestError: unknown) {
+      const apiMessage = isAxiosError<{
+        detail?: string;
+        message?: string;
+      }>(requestError)
+        ? (requestError.response?.data?.detail ??
+          requestError.response?.data?.message)
+        : undefined;
+
+      setAddToCartError(
+        typeof apiMessage === "string"
+          ? apiMessage
+          : "Unable to add this item to your cart. Please try again.",
+      );
+    } finally {
+      setIsAddingToCart(false);
+    }
   };
 
   const handleBuyNow = () => {
@@ -222,8 +262,6 @@ function ProductDetailsContainer() {
       setWishlistDialog("variant");
       return;
     }
-    console.log("selectedVariant is--", selectedVariant);
-
     if (isWishlistUpdating) {
       return;
     }
@@ -302,6 +340,11 @@ function ProductDetailsContainer() {
         selectedImageIndex={selectedImageIndex}
         isWishlisted={isWishlisted}
         isWishlistUpdating={isWishlistUpdating}
+        isAddingToCart={isAddingToCart}
+        isAddedToCart={Boolean(
+          selectedVariant && addedCartVariantIds.has(selectedVariant.variantid),
+        )}
+        addToCartError={addToCartError}
         onOptionChange={handleOptionChange}
         onImageChange={setSelectedImageIndex}
         onWishlistChange={handleWishlistChange}

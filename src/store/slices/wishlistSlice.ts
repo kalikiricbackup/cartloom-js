@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { signedOut } from "./authSlice";
 
 interface WishlistState {
   productIds: number[];
@@ -40,6 +41,11 @@ const wishlistSlice = createSlice({
     clearWishlist(state) {
       state.productIds = [];
     },
+  },
+  extraReducers(builder) {
+    builder.addCase(signedOut, (state) => {
+      state.productIds = [];
+    });
   },
 });
 

@@ -91,6 +91,12 @@
   color: #ffffff;
 }
 
+.product-details__cart-error {
+  margin: 10px 0 0;
+  color: #b42318;
+  font-size: 0.85rem;
+}
+
 .product-details__purchase button:disabled {
   border-color: #cbd4df;
   background: #e9edf2;

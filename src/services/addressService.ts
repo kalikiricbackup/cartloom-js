@@ -55,7 +55,7 @@ export const createAddress = async (
 export const updateAddress = async (
   address: AddressUpdateRequest,
 ): Promise<Address> => {
-  const response = await apiClient.put<Address>(
+  const response = await apiClient.patch<Address>(
     API_ENDPOINTS.ADDRESSES.BY_ID(address.id),
     address,
   );

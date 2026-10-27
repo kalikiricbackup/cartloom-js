@@ -12,6 +12,7 @@ import AccountSection from "../pages/Account/AccountSection";
 import MyProfile from "../pages/MyProfile/MyProfile";
 import Addresses from "../pages/Addresses/Addresses";
 import AddAddress from "../pages/Addresses/AddAddress";
+import Cart from "../pages/Cart/Cart";
 
 function AppRoutes() {
   return (
@@ -22,6 +23,7 @@ function AppRoutes() {
           <Route path="/products/:category?" element={<Products />} />
           <Route path="/productdetails/:id" element={<ProductDetails />} />
           <Route element={<ProtectedRoute />}>
+            <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/orders" element={<AccountSection />} />
