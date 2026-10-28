@@ -14,6 +14,9 @@ import Addresses from "../pages/Addresses/Addresses";
 import AddAddress from "../pages/Addresses/AddAddress";
 import Cart from "../pages/Cart/Cart";
 import MyOrdersContainer from "../containers/Orders/MyOrdersContainer";
+import AddressSelectionContainer from "../containers/Checkout/AddressSelectionContainer";
+import PaymentSelectionContainer from "../containers/Checkout/PaymentSelectionContainer";
+import OrderSuccessContainer from "../containers/Checkout/OrderSuccessContainer";
 
 function AppRoutes() {
   return (
@@ -28,6 +31,15 @@ function AppRoutes() {
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/profile" element={<MyProfile />} />
             <Route path="/orders" element={<MyOrdersContainer />} />
+            <Route
+              path="/checkout/address"
+              element={<AddressSelectionContainer />}
+            />
+            <Route
+              path="/checkout/payment"
+              element={<PaymentSelectionContainer />}
+            />
+            <Route path="/order-success" element={<OrderSuccessContainer />} />
             <Route path="/addresses" element={<Addresses />} />
             <Route path="/addresses/new" element={<AddAddress />} />
           </Route>

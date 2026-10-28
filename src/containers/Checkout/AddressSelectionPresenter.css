@@ -1,0 +1,87 @@
+.checkout-address-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.checkout-address-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #dce5f3;
+  border-radius: 12px;
+  color: #173268;
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease;
+}
+.checkout-address-card:hover {
+  border-color: #9ab9ef;
+}
+.checkout-address-card--selected {
+  border-color: #2563eb;
+  background: #f3f7ff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+.checkout-address-card input {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  margin: 3px 0 0;
+  accent-color: #1768e8;
+}
+.checkout-address-card__body {
+  display: grid;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+.checkout-address-card__body strong {
+  font-size: 1rem;
+}
+.checkout-address-card__body > span {
+  color: #617695;
+  font-size: 0.91rem;
+  line-height: 1.45;
+}
+.checkout-selected-tag {
+  color: #1768c5;
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+.checkout-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px solid #e8eef7;
+}
+
+body[data-theme="dark"] .checkout-address-card {
+  border-color: #29436b;
+  background: #10284d;
+  color: #eaf3ff;
+}
+body[data-theme="dark"] .checkout-address-card__body > span {
+  color: #adc0dc;
+}
+body[data-theme="dark"] .checkout-address-card--selected {
+  background: #18345d;
+}
+
+@media (max-width: 520px) {
+  .checkout-footer {
+    align-items: stretch;
+    flex-direction: column-reverse;
+  }
+  .checkout-footer > * {
+    justify-content: center;
+  }
+}

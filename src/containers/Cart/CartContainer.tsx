@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   CartItem,
   getCart,
@@ -9,6 +10,7 @@ import {
 import CartPresenter from "./CartPresenter";
 
 function CartContainer() {
+  const navigate = useNavigate();
   const [items, setItems] = useState<CartItem[]>([]);
   const [cartTotal, setCartTotal] = useState("0");
   const [isLoading, setIsLoading] = useState(true);
@@ -132,6 +134,7 @@ function CartContainer() {
       itemToRemove={itemToRemove}
       isRemoving={isRemoving}
       onRetry={retryLoading}
+      onPlaceOrder={() => navigate("/checkout/address")}
       onQuantityChange={handleQuantityChange}
       onRemoveRequest={handleRemoveRequest}
       onRemoveConfirm={() => void handleRemoveConfirm()}

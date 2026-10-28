@@ -1,0 +1,65 @@
+.order-success {
+  max-width: 700px;
+  margin: 24px auto;
+  padding: clamp(30px, 7vw, 64px) 24px;
+  border: 1px solid #dce5f3;
+  border-radius: 18px;
+  background: #fff;
+  text-align: center;
+  box-shadow: 0 14px 38px rgba(24, 54, 103, 0.08);
+}
+.order-success__icon {
+  display: grid;
+  width: 70px;
+  height: 70px;
+  margin: 0 auto 22px;
+  place-items: center;
+  border-radius: 50%;
+  background: #e8f8ef;
+  color: #13955d;
+  font-size: 2rem;
+  font-weight: 900;
+}
+.order-success h1 {
+  margin: 0;
+  color: #173268;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+}
+.order-success__id {
+  margin: 14px 0 0;
+  color: #617695;
+  font-size: 1.05rem;
+}
+.order-success__id strong {
+  color: #173268;
+}
+.order-success__actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+}
+
+body[data-theme="dark"] .order-success {
+  border-color: #29436b;
+  background: #10284d;
+  color: #eaf3ff;
+}
+body[data-theme="dark"] .order-success h1,
+body[data-theme="dark"] .order-success__id strong {
+  color: #eaf3ff;
+}
+body[data-theme="dark"] .order-success__id {
+  color: #adc0dc;
+}
+body[data-theme="dark"] .checkout-outline-link {
+  border-color: #355174;
+  background: #18345d;
+  color: #eaf3ff;
+}
+
+@media (max-width: 520px) {
+  .order-success__actions {
+    flex-direction: column;
+  }
+}
