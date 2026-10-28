@@ -26,4 +26,8 @@ export const API_ENDPOINTS = {
     LIST: "/addresses",
     BY_ID: (id: number) => `/addresses/${id}`,
   },
+  
+  ORDERS: {
+    LIST: "/orders",
+  },
 };

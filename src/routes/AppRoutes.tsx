@@ -13,6 +13,7 @@ import MyProfile from "../pages/MyProfile/MyProfile";
 import Addresses from "../pages/Addresses/Addresses";
 import AddAddress from "../pages/Addresses/AddAddress";
 import Cart from "../pages/Cart/Cart";
+import MyOrdersContainer from "../containers/Orders/MyOrdersContainer";
 
 function AppRoutes() {
   return (
@@ -26,7 +27,7 @@ function AppRoutes() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<Wishlist />} />
             <Route path="/profile" element={<MyProfile />} />
-            <Route path="/orders" element={<AccountSection />} />
+            <Route path="/orders" element={<MyOrdersContainer />} />
             <Route path="/addresses" element={<Addresses />} />
             <Route path="/addresses/new" element={<AddAddress />} />
           </Route>
