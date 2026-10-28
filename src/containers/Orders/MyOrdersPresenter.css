@@ -1,0 +1,90 @@
+.my-orders__list {
+  display: grid;
+  gap: 16px;
+}
+.my-order-card {
+  overflow: hidden;
+  border: 1px solid #dce5f3;
+  border-radius: 12px;
+}
+.my-order-card__header {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 15px 18px;
+  background: #f5f8fd;
+}
+.my-order-card__header > div {
+  display: grid;
+  gap: 4px;
+}
+.my-order-card__header span {
+  color: #7185a3;
+  font-size: 0.78rem;
+}
+.my-order-card__header strong {
+  color: #173268;
+}
+.my-order-card__status {
+  margin-left: auto;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background: #e8f8ef;
+  color: #148653 !important;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+.my-order-card__items {
+  display: grid;
+  gap: 11px;
+  margin: 0;
+  padding: 17px 18px;
+  list-style: none;
+}
+.my-order-card__items li {
+  min-width: 0;
+  color: #536987;
+}
+.my-order-card > footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px;
+  border-top: 1px solid #e8eef7;
+  color: #637895;
+  font-size: 0.86rem;
+}
+.my-order-card > footer strong {
+  color: #173268;
+  white-space: nowrap;
+}
+
+body[data-theme="dark"] .my-order-card {
+  border-color: #29436b;
+  background: #10284d;
+  color: #eaf3ff;
+}
+body[data-theme="dark"] .my-order-card__header strong,
+body[data-theme="dark"] .my-order-card__items strong,
+body[data-theme="dark"] .my-order-card > footer strong {
+  color: #eaf3ff;
+}
+body[data-theme="dark"] .my-order-card > footer {
+  color: #adc0dc;
+}
+body[data-theme="dark"] .my-order-card__header {
+  background: #18345d;
+}
+
+@media (max-width: 520px) {
+  .my-order-card__header {
+    flex-wrap: wrap;
+    gap: 14px 22px;
+  }
+  .my-order-card__status {
+    margin-left: 0;
+  }
+  .my-order-card > footer {
+    flex-direction: column;
+  }
+}
