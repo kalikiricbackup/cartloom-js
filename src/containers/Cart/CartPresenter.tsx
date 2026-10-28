@@ -14,6 +14,7 @@ interface CartPresenterProps {
   itemToRemove: CartItem | null;
   isRemoving: boolean;
   onRetry: () => void;
+  onPlaceOrder: () => void;
   onQuantityChange: (item: CartItem, quantity: number) => void;
   onRemoveRequest: (item: CartItem) => void;
   onRemoveConfirm: () => void;
@@ -33,6 +34,7 @@ function CartPresenter({
   itemToRemove,
   isRemoving,
   onRetry,
+  onPlaceOrder,
   onQuantityChange,
   onRemoveRequest,
   onRemoveConfirm,
@@ -235,8 +237,7 @@ function CartPresenter({
                 <button
                   type="button"
                   className="cart-summary__checkout"
-                  disabled
-                  title="Checkout is not available yet"
+                  onClick={onPlaceOrder}
                 >
                   Place Order <span aria-hidden="true">→</span>
                 </button>
