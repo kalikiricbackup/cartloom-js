@@ -8,6 +8,8 @@ interface ProductGridProps {
   columns?: number;
   showWishlist?: boolean;
   selectedVariants?: ProductVariant[];
+  onAddToCart?: (productId: number, variantId: string) => void;
+  addingToCartVariantId?: string | null;
 }
 
 function ProductGrid({
@@ -15,6 +17,8 @@ function ProductGrid({
   columns = 3,
   showWishlist = true,
   selectedVariants,
+  onAddToCart,
+  addingToCartVariantId,
 }: ProductGridProps) {
   return (
     <div
@@ -27,6 +31,11 @@ function ProductGrid({
           product={product}
           selectedVariant={selectedVariants?.[index]}
           showWishlist={showWishlist}
+          onAddToCart={onAddToCart}
+          isAddingToCart={
+            Boolean(selectedVariants?.[index]) &&
+            addingToCartVariantId === selectedVariants?.[index]?.variantid
+          }
         />
       ))}
     </div>

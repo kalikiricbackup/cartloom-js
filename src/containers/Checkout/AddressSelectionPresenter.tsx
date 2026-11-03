@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import PageContainer from "../../components/PageContainer/PageContainer";
 import { Address } from "../../services/addressService";
+import { formatAddress } from "../../utils/Utility";
 import "./AddressSelectionPresenter.css";
 
 interface AddressSelectionPresenterProps {
@@ -8,21 +9,19 @@ interface AddressSelectionPresenterProps {
   selectedId: number | null;
   isLoading: boolean;
   error: string;
+  backLinkTo: string;
+  backLinkLabel: string;
   onSelect: (id: number) => void;
   onContinue: () => void;
 }
-
-export const formatAddress = (address: Address): string =>
-  [address.address, address.street, address.city, address.state]
-    .filter(Boolean)
-    .filter((part, index, parts) => parts.indexOf(part) === index)
-    .join(", ");
 
 function AddressSelectionPresenter({
   addresses,
   selectedId,
   isLoading,
   error,
+  backLinkTo,
+  backLinkLabel,
   onSelect,
   onContinue,
 }: AddressSelectionPresenterProps) {
@@ -95,8 +94,8 @@ function AddressSelectionPresenter({
         )}
 
         <footer className="checkout-footer">
-          <Link className="checkout-back-link" to="/cart">
-            ← Back to cart
+          <Link className="checkout-back-link" to={backLinkTo}>
+            {backLinkLabel}
           </Link>
           <button
             className="checkout-primary-button"

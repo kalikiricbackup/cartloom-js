@@ -8,7 +8,6 @@ import ProductDetails from "../pages/ProductDetails/ProductDetails";
 import Register from "../pages/Register/Register";
 import Login from "../pages/Login/Login";
 import ProtectedRoute from "./ProtectedRoute";
-import AccountSection from "../pages/Account/AccountSection";
 import MyProfile from "../pages/MyProfile/MyProfile";
 import Addresses from "../pages/Addresses/Addresses";
 import AddAddress from "../pages/Addresses/AddAddress";

@@ -217,7 +217,7 @@ function CartPresenter({
                   <div>
                     <dt>Discount</dt>
                     <dd className="cart-summary__discount">
-                      −{formatRupees(discount)}
+                      -{formatRupees(discount)}
                     </dd>
                   </div>
                   <div>

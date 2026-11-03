@@ -1,17 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   Address,
   getAddresses,
   getAddressErrorMessage,
 } from "../../services/addressService";
+import {
+  BuyNowCheckoutItem,
+  CheckoutSource,
+} from "../../services/orderService";
 import AddressSelectionPresenter from "./AddressSelectionPresenter";
 
 function AddressSelectionContainer() {
   const navigate = useNavigate();
   const location = useLocation();
-  const previousAddress = (location.state as { address?: Address } | null)
-    ?.address;
+  const checkoutState = location.state as {
+    address?: Address;
+    source?: CheckoutSource;
+    buyNowItem?: BuyNowCheckoutItem;
+  } | null;
+  const previousAddress = checkoutState?.address;
+  const buyNowItem = checkoutState?.buyNowItem;
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedId, setSelectedId] = useState<number | null>(
     previousAddress?.id ?? null,
@@ -38,9 +47,28 @@ function AddressSelectionContainer() {
       (address) => address.id === selectedId,
     );
     if (selectedAddress) {
-      navigate("/checkout/payment", { state: { address: selectedAddress } });
+      navigate("/checkout/payment", {
+        state: {
+          address: selectedAddress,
+          source: checkoutState?.source ?? "cart",
+          buyNowItem: checkoutState?.buyNowItem,
+        },
+      });
     }
   };
+
+  const backLink = useMemo(() => {
+    if (checkoutState?.source === "product-details" && buyNowItem) {
+      return {
+        to: `/productdetails/${buyNowItem.parent_id}?variant=${encodeURIComponent(buyNowItem.variant_id)}`,
+        label: "← Back to product",
+      };
+    }
+    return { to: "/cart", label: "← Back to cart" };
+  }, [
+    buyNowItem,
+    checkoutState?.source,
+  ]);
 
   return (
     <AddressSelectionPresenter
@@ -48,6 +76,8 @@ function AddressSelectionContainer() {
       selectedId={selectedId}
       isLoading={isLoading}
       error={error}
+      backLinkTo={backLink.to}
+      backLinkLabel={backLink.label}
       onSelect={setSelectedId}
       onContinue={handleContinue}
     />

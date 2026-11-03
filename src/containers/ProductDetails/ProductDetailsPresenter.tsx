@@ -134,9 +134,13 @@ function ProductDetailsPresenter({
                     type="button"
                     className="product-details__buy-button"
                     onClick={onBuyNow}
-                    disabled={!selectedVariant || selectedVariant.stock === 0}
+                    disabled={
+                      !selectedVariant ||
+                      selectedVariant.stock === 0 ||
+                      isAddingToCart
+                    }
                   >
-                    Buy Now
+                    {isAddingToCart ? "Processing…" : "Buy Now"}
                   </button>
                 </div>
                 {addToCartError && (

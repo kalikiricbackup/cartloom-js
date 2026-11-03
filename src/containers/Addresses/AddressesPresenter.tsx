@@ -48,11 +48,8 @@ function AddressesPresenter({
     <section className="addresses" aria-labelledby="addresses-title">
       <header className="addresses__header">
         <div>
-          <p className="addresses__eyebrow">Your account</p>
-          <h1 id="addresses-title">Saved addresses</h1>
-          <p className="addresses__intro">
-            View and manage the addresses saved to your account.
-          </p>
+          <h1 id="addresses-title">My addresses</h1>
+          {/* <p className="addresses__intro">View and manage the addresses.</p> */}
           <Link className="addresses__add-button" to="/addresses/new">
             Add New Address
           </Link>

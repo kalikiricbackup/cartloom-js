@@ -13,6 +13,10 @@ export interface LoginResponse {
   profile_completed: boolean;
 }
 
+export interface LogoutResponse {
+  message: string;
+}
+
 export const getUserDisplayName = (
   accessToken: string,
   email: string,
@@ -63,6 +67,22 @@ export const login = async (payload: LoginRequest): Promise<LoginResponse> => {
     {
       skipAuth: true,
     } as CustomAxiosRequestConfig,
+  );
+
+  return response.data;
+};
+
+export const logout = async (): Promise<LogoutResponse> => {
+  const refreshToken = localStorage.getItem("refreshToken");
+
+  if (!refreshToken) {
+    throw new Error("Your refresh token is unavailable. Please sign in again.");
+  }
+
+  const response = await apiClient.post<LogoutResponse>(
+    API_ENDPOINTS.AUTH.LOGOUT,
+    { refresh_token: refreshToken },
+    { skipAuth: true } as CustomAxiosRequestConfig,
   );
 
   return response.data;

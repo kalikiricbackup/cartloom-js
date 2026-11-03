@@ -9,6 +9,32 @@
   font-size: 1.45rem;
 }
 
+.my-profile__status {
+  margin: 24px 0;
+  color: #7085a8;
+}
+
+.my-profile__error {
+  padding: 16px 18px;
+  border: 1px solid #f4c7c3;
+  border-radius: 10px;
+  background: #fff3f1;
+  color: #a1261c;
+}
+
+.my-profile__error p {
+  margin: 0 0 10px;
+}
+
+.my-profile__error button {
+  padding: 7px 12px;
+  border: 1px solid #e6aaa4;
+  border-radius: 7px;
+  background: #ffffff;
+  color: #a1261c;
+  font-weight: 700;
+}
+
 .my-profile__summary,
 .my-profile__information {
   border: 1px solid #e0e8f3;
@@ -175,6 +201,18 @@
 
 .my-profile__button--primary:hover {
   background: #0d57cb;
+}
+
+.my-profile__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.my-profile__form-error {
+  flex: 1 1 100%;
+  margin: 0;
+  color: #b42318;
+  font-size: 0.9rem;
 }
 
 @media (max-width: 600px) {

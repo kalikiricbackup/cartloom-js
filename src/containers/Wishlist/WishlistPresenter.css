@@ -36,3 +36,11 @@
   border-radius: 10px;
   text-align: center;
 }
+
+.wishlist-page__cart-error {
+  margin: 0 0 16px;
+  padding: 11px 14px;
+  border-radius: 8px;
+  background: #fff1f0;
+  color: #b42318;
+}
