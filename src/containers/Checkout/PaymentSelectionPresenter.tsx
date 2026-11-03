@@ -1,13 +1,27 @@
 import { Link } from "react-router-dom";
 import PageContainer from "../../components/PageContainer/PageContainer";
 import { Address } from "../../services/addressService";
-import { formatAddress } from "./AddressSelectionPresenter";
+import {
+  BuyNowCheckoutItem,
+  CheckoutSource,
+} from "../../services/orderService";
+import { formatAddress } from "../../utils/Utility";
 import "./PaymentSelectionPresenter.css";
 
 export type PaymentMethod = "upi" | "card" | "net-banking" | "cod";
 
+export interface PaymentMethodOption {
+  value: PaymentMethod;
+  label: string;
+  icon: string;
+  description?: string;
+}
+
 interface PaymentSelectionPresenterProps {
   address: Address;
+  checkoutSource: CheckoutSource;
+  buyNowItem?: BuyNowCheckoutItem;
+  paymentMethods: PaymentMethodOption[];
   itemCount: number;
   listPriceTotal: number;
   itemSubtotal: number;
@@ -21,33 +35,14 @@ interface PaymentSelectionPresenterProps {
   onPay: () => void;
 }
 
-const paymentMethods: Array<{
-  value: PaymentMethod;
-  label: string;
-  icon: string;
-  description?: string;
-}> = [
-  {
-    value: "upi",
-    label: "UPI",
-    icon: "◉",
-    description: "Google Pay, PhonePe, etc.",
-  },
-  {
-    value: "card",
-    label: "Credit / Debit Card",
-    icon: "▣",
-    description: "Visa · Mastercard · RuPay",
-  },
-  { value: "net-banking", label: "Net Banking", icon: "▤" },
-  { value: "cod", label: "Cash on Delivery (COD)", icon: "◷" },
-];
-
 const formatRupees = (amount: number) =>
   `₹${amount.toLocaleString("en-IN", { maximumFractionDigits: 0 })}`;
 
 function PaymentSelectionPresenter({
   address,
+  checkoutSource,
+  buyNowItem,
+  paymentMethods,
   itemCount,
   listPriceTotal,
   itemSubtotal,
@@ -109,11 +104,17 @@ function PaymentSelectionPresenter({
                       name="payment-method"
                       value={method.value}
                       checked={paymentMethod === method.value}
-                      onChange={() => onPaymentMethodChange(method.value)}
+                      onChange={() => {
+                        if (method.value !== "cod") {
+                          window.alert("Coming soon");
+                          return;
+                        }
+                        onPaymentMethodChange("cod");
+                      }}
                     />
-                    <span className="payment-option__icon" aria-hidden="true">
+                    {/* <span className="payment-option__icon" aria-hidden="true">
                       {method.icon}
-                    </span>
+                    </span> */}
                     <span className="payment-option__text">
                       <strong>{method.label}</strong>
                       {method.description && <span>{method.description}</span>}
@@ -137,9 +138,12 @@ function PaymentSelectionPresenter({
                   {formatAddress(address)}{" "}
                   {address.pin ? `· ${address.pin}` : ""}
                 </span>
-                <Link to="/checkout/address" state={{ address }}>
+                {/* <Link
+                  to="/checkout/address"
+                  state={{ address, source: checkoutSource, buyNowItem }}
+                >
                   Change address
-                </Link>
+                </Link> */}
               </div>
             </section>
 
@@ -191,7 +195,7 @@ function PaymentSelectionPresenter({
           <Link
             className="checkout-back-link payment-back-link"
             to="/checkout/address"
-            state={{ address }}
+            state={{ address, source: checkoutSource, buyNowItem }}
           >
             ← Back to delivery address
           </Link>

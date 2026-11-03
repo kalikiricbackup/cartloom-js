@@ -231,10 +231,23 @@ function ProductDetailsContainer() {
     }
   };
 
-  const handleBuyNow = () => {
-    console.log("Buy Now", {
-      product,
-      selectedVariant,
+  const handleBuyNow = async () => {
+    if (!selectedVariant || isAddingToCart) {
+      return;
+    }
+
+    navigate("/checkout/address", {
+      state: {
+        source: "product-details",
+        buyNowItem: {
+          parent_id: product.id,
+          variant_id: selectedVariant.variantid,
+          quantity: 1,
+          productName: product.name,
+          unitPrice: selectedVariant.price,
+          originalPrice: selectedVariant.originalPrice,
+        },
+      },
     });
   };
 

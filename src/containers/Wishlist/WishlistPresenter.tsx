@@ -7,9 +7,19 @@ interface WishlistPresenterProps {
   items: WishlistItem[];
   isLoading: boolean;
   error: string;
+  onAddToCart: (productId: number, variantId: string) => void;
+  addingToCartVariantId: string | null;
+  cartActionError: string;
 }
 
-function WishlistPresenter({ items, isLoading, error }: WishlistPresenterProps) {
+function WishlistPresenter({
+  items,
+  isLoading,
+  error,
+  onAddToCart,
+  addingToCartVariantId,
+  cartActionError,
+}: WishlistPresenterProps) {
   const products = items.map((item) => item.product);
 
   return (
@@ -29,11 +39,21 @@ function WishlistPresenter({ items, isLoading, error }: WishlistPresenterProps) 
         ) : error ? (
           <p role="alert">{error}</p>
         ) : products.length > 0 ? (
-          <ProductGrid
-            products={products}
-            selectedVariants={items.map((item) => item.variant)}
-            columns={4}
-          />
+          <>
+            {cartActionError && (
+              <p className="wishlist-page__cart-error" role="alert">
+                {cartActionError}
+              </p>
+            )}
+            <ProductGrid
+              products={products}
+              selectedVariants={items.map((item) => item.variant)}
+              columns={4}
+              showWishlist={false}
+              onAddToCart={onAddToCart}
+              addingToCartVariantId={addingToCartVariantId}
+            />
+          </>
         ) : (
           <p className="wishlist-page__empty">Your wishlist is empty.</p>
         )}

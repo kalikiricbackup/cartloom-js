@@ -1,5 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import { isAxiosError } from "axios";
+import { logout } from "../../services/authService";
 import { signedOut } from "../../store/slices/authSlice";
 import { useAppDispatch, useAppSelector } from "../../store/store";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
@@ -11,6 +13,8 @@ function Header() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState("");
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false);
   const accountMenuRef = useRef<HTMLDivElement>(null);
 
@@ -41,17 +45,46 @@ function Header() {
     };
   }, [isAccountMenuOpen]);
 
-  const handleLogout = () => {
-    setIsLogoutDialogOpen(false);
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    localStorage.removeItem("userName");
+  const handleLogout = async () => {
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
+    setLogoutError("");
     setIsAccountMenuOpen(false);
-    dispatch(signedOut());
-    navigate("/", { replace: true });
+
+    try {
+      await logout();
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("userName");
+      setIsLogoutDialogOpen(false);
+      dispatch(signedOut());
+      navigate("/", { replace: true });
+    } catch (error: unknown) {
+      const apiMessage = isAxiosError<{ detail?: string; message?: string }>(
+        error,
+      )
+        ? (error.response?.data?.detail ?? error.response?.data?.message)
+        : undefined;
+      setLogoutError(
+        typeof apiMessage === "string"
+          ? apiMessage
+          : "Unable to log out. Please try again.",
+      );
+    } finally {
+      setIsLoggingOut(false);
+    }
   };
 
-  const cancelLogout = () => setIsLogoutDialogOpen(false);
+  const cancelLogout = () => {
+    if (isLoggingOut) {
+      return;
+    }
+    setLogoutError("");
+    setIsLogoutDialogOpen(false);
+  };
 
   return (
     <header className="header">
@@ -120,12 +153,15 @@ function Header() {
                 aria-expanded={isAccountMenuOpen}
                 onClick={() => setIsAccountMenuOpen((isOpen) => !isOpen)}
               >
-                <span className="header__account-name">
-                  {displayName || "My Account"}
+                <span className="header__account-avatar" aria-hidden="true">
+                  {(displayName?.trim() || "A").charAt(0).toUpperCase()}
                 </span>
-                {/* <span className="header__account-chevron" aria-hidden="true">
-                  ⌄
-                </span> */}
+                <span className="header__account-name">
+                  {displayName?.trim() || "My Account"}
+                </span>
+                <span className="header__account-chevron" aria-hidden="true">
+                  ▾
+                </span>
               </button>
               {isAccountMenuOpen && (
                 <div className="header__account-menu" role="menu">
@@ -154,6 +190,7 @@ function Header() {
                     type="button"
                     role="menuitem"
                     onClick={() => {
+                      setLogoutError("");
                       setIsAccountMenuOpen(false);
                       setIsLogoutDialogOpen(true);
                     }}
@@ -173,9 +210,12 @@ function Header() {
       <ConfirmDialog
         isOpen={isLogoutDialogOpen}
         title="Leaving so soon?"
-        message="Are you sure you want to log out of your CartLoom account?"
+        message={
+          logoutError ||
+          "Are you sure you want to log out of your CartLoom account?"
+        }
         cancelLabel="Stay signed in"
-        confirmLabel="Log out"
+        confirmLabel={isLoggingOut ? "Logging out…" : "Log out"}
         onCancel={cancelLogout}
         onConfirm={handleLogout}
       />

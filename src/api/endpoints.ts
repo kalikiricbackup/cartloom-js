@@ -2,6 +2,9 @@ export const API_ENDPOINTS = {
   AUTH: {
     LOGIN: "auth/login",
     REGISTER: "auth/register",
+    LOGOUT: "auth/logout",
+    CURRENT_USER: "/auth/me",
+    EDIT_PROFILE: "/auth/Edit-profile",
   },
 
   PRODUCTS: {
@@ -29,5 +32,6 @@ export const API_ENDPOINTS = {
   
   ORDERS: {
     LIST: "/orders",
+    BUY_NOW: "/orders/buy-now",
   },
 };

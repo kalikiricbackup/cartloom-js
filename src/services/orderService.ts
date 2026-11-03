@@ -24,8 +24,35 @@ export interface Order {
   items: OrderItem[];
 }
 
-export const placeOrder = async (): Promise<Order> => {
-  const response = await apiClient.post<Order>(API_ENDPOINTS.ORDERS.LIST);
+export interface BuyNowOrderItem {
+  parent_id: number;
+  variant_id: string;
+  quantity: number;
+}
+
+export interface BuyNowCheckoutItem extends BuyNowOrderItem {
+  productName: string;
+  unitPrice: number;
+  originalPrice: number;
+}
+
+export type CheckoutSource = "cart" | "product-details";
+
+export const placeOrder = async (addressId: number): Promise<Order> => {
+  const response = await apiClient.post<Order>(API_ENDPOINTS.ORDERS.LIST, {
+    address_id: addressId,
+  });
+  return response.data;
+};
+
+export const placeBuyNowOrder = async (
+  addressId: number,
+  items: BuyNowOrderItem[],
+): Promise<Order> => {
+  const response = await apiClient.post<Order>(API_ENDPOINTS.ORDERS.BUY_NOW, {
+    address_id: addressId,
+    items,
+  });
   return response.data;
 };
 

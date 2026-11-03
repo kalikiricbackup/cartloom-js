@@ -19,12 +19,16 @@ interface ProductCardProps {
   product: Product;
   selectedVariant?: ProductVariant;
   showWishlist?: boolean;
+  onAddToCart?: (productId: number, variantId: string) => void;
+  isAddingToCart?: boolean;
 }
 
 function ProductCard({
   product,
   selectedVariant,
   showWishlist = true,
+  onAddToCart,
+  isAddingToCart = false,
 }: ProductCardProps) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -149,8 +153,15 @@ function ProductCard({
             <span>🚚 Fast Delivery</span>
           </div> */}
         </Link>
-        <Button onClick={() => console.log(`Add ${product.name} to cart`)}>
-          Add to Cart
+        <Button
+          disabled={isAddingToCart || (Boolean(onAddToCart) && !displayVariant)}
+          onClick={() => {
+            if (displayVariant) {
+              onAddToCart?.(product.id, displayVariant.variantid);
+            }
+          }}
+        >
+          {isAddingToCart ? "Adding…" : "Add to Cart"}
         </Button>
         {showWishlist && wishlistError && (
           <p className="plp-product-card__wishlist-error" role="alert">

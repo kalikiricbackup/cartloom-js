@@ -134,7 +134,9 @@ function CartContainer() {
       itemToRemove={itemToRemove}
       isRemoving={isRemoving}
       onRetry={retryLoading}
-      onPlaceOrder={() => navigate("/checkout/address")}
+      onPlaceOrder={() =>
+        navigate("/checkout/address", { state: { source: "cart" } })
+      }
       onQuantityChange={handleQuantityChange}
       onRemoveRequest={handleRemoveRequest}
       onRemoveConfirm={() => void handleRemoveConfirm()}
